@@ -1,0 +1,24 @@
+@import "tailwindcss";
+
+:root {
+  --color-brand-black: #282f39;
+  --color-brand-black-light: #09172f;
+  --color-brand-teal: #6ecacf;
+  --color-brand-grey: #EEEEEE;
+
+  --background: var(--color-brand-black-light);
+  --foreground: var(--color-brand-black);
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--color-background);
+  font-family: var(--font-sans);
+}
