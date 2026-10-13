@@ -14,25 +14,30 @@ export default function LoginPage() {
   return (
     <main className="flex flex-col w-full h-full items-center justify-center">
       {/* Card */}
-      <div className="flex flex-col w-100 h-fit p-5 items-center justify-center rounded-lg">
-        <FilmIcon size={50} />
-        <h1 className="flex w-full justify-center text-xl font-sans py-3 font-extralight">
-          Sign in to <span className="font-semibold">&nbsp;Film.io</span>
-        </h1>
+      <div className="flex flex-col w-100 h-fit px-5 py-10 items-center justify-center rounded-lg bg-slate-800">
+        <section className="flex flex-col w-full h-fit items-center justify-center pb-5">
+          <FilmIcon size={50} />
+          <h1 className="flex w-full justify-center text-xl font-sans py-3 font-semibold">
+            Film.io
+          </h1>
+          <h2 className="pb-2 flex text-center font-extralight">
+            Welcome! <br /> Please sign in to your account.
+          </h2>
+        </section>
         <form action={""} className="flex w-full h-fit">
           <FieldGroup className="flex flex-col w-full h-full gap-4">
-            <Field orientation={"vertical"} className="py-5 gap-2">
+            <Field orientation={"vertical"} className="gap-2">
               <FieldLabel htmlFor="email" className="line-clamp-1">
                 Email address
               </FieldLabel>
-              <InputGroup id="email" className="min-w-full h-fit flex rounded-lg border border-white/50"> 
+              <InputGroup
+                id="email"
+                className="min-w-full h-fit flex rounded-lg border border-white/50"
+              >
                 <InputGroupAddon align="inline-start" className="text-white/50">
-                    <Lock size={25}/>
+                  <Lock size={25} />
                 </InputGroupAddon>
-                <InputGroupInput
-                  type="text"
-                  placeholder="sample@gmail.com"
-                />
+                <InputGroupInput type="text" placeholder="sample@gmail.com" />
               </InputGroup>
             </Field>
             <Field orientation={"vertical"}>

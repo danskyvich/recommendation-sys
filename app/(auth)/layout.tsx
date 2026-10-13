@@ -1,4 +1,4 @@
-import Footer from "../components/footer";
+import Footer from "../components/layout/footer";
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
     return (
