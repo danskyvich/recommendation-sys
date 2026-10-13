@@ -14,14 +14,14 @@ export default function LoginPage() {
   return (
     <main className="flex flex-col w-full h-full items-center justify-center">
       {/* Card */}
-      <div className="flex flex-col w-100 h-fit px-5 py-10 items-center justify-center rounded-lg bg-slate-800">
+      <div className="flex flex-col w-100 h-fit px-5 py-10 items-center justify-center rounded-lg bg-slate-800 shadow-md">
         <section className="flex flex-col w-full h-fit items-center justify-center pb-5">
           <FilmIcon size={50} />
-          <h1 className="flex w-full justify-center text-xl font-sans py-3 font-semibold">
+          <h1 className="flex w-full justify-center text-xl font-sans pt-3 font-semibold">
             Film.io
           </h1>
           <h2 className="pb-2 flex text-center font-extralight">
-            Welcome! <br /> Please sign in to your account.
+            Please sign in to your account.
           </h2>
         </section>
         <form action={""} className="flex w-full h-fit">
@@ -43,7 +43,7 @@ export default function LoginPage() {
             <Field orientation={"vertical"}>
               <Button
                 variant={"default"}
-                className="flex w-full cursor-pointer bg-(--color-brand-teal) rounded-lg"
+                className="flex w-full cursor-pointer bg-(--color-brand-teal) rounded-lg hover:bg-teal-500 active:bg-teal-600"
                 type="submit"
                 size={"default"}
               >
