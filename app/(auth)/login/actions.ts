@@ -1,7 +1,7 @@
-"use server"
-
-import { redirect } from "next/navigation"
-
-export const handleLoginButton = () => {
-    redirect("/")
-}
+export const handleSubmit = (connection: string) => {
+    const params = new URLSearchParams({
+      connection,
+      returnTo: "/dashboard",
+    });
+    window.location.href = `/auth/login?${params.toString()}`;
+  }

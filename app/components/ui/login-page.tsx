@@ -1,12 +1,14 @@
+"use client"
+
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
 import { FilmIcon, Lock, Mail } from "lucide-react";
 import { GoogleIcon } from "../../../lib/icons";
 import { useEffect } from "react";
-import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
+import { handleSubmit } from "@/app/(auth)/login/actions";
 
 export default function LoginPage() {
+
   useEffect(() => {
     document.title === "Sign in to Film.io";
   }, []);
@@ -24,35 +26,44 @@ export default function LoginPage() {
             Please sign in to your account.
           </h2>
         </section>
-        <form action={""} className="flex w-full h-fit">
-          <FieldGroup className="flex flex-col w-full h-full gap-3">
-            <Field orientation={"vertical"}>
-              <Button
-                variant={"default"}
-                className="flex w-full cursor-pointer bg-(--color-brand-teal) rounded-lg hover:bg-teal-500 active:bg-teal-600"
-                type="submit"
-                size={"default"}
-                id="email-button"
-              >
-                <Mail size={15} className="min-w-3 h-auto text-(--color-brand-black-light)"/>
-                <p className="text-(--color-brand-black-light) font-semibold">
-                  Sign in using email
-                </p>
-              </Button>
-            </Field>
-            <Field>
-              <Button
-                type="button"
-                variant={"secondary"}
-                className="border-(--color-brand-teal) border rounded-lg gap-3 cursor-pointer hover:bg-(--color-brand-teal)/50 active:bg-(--color-brand-teal) active:text-(--color-brand-black-light)"
-                id="google-button"
-              >
-                <GoogleIcon />
-                <p>Sign in using Google</p>
-              </Button>
-            </Field>
-          </FieldGroup>
-        </form>
+        <FieldGroup className="flex flex-col w-full h-full gap-3">
+          <Field orientation={"vertical"}>
+            <Button
+              variant={"default"}
+              className="flex w-full cursor-pointer bg-(--color-brand-teal) rounded-lg hover:bg-teal-500 active:bg-teal-600"
+              type="submit"
+              size={"default"}
+              id="email-button"
+              onClick={() => handleSubmit("email")}
+            >
+              <Mail
+                size={15}
+                className="min-w-3 h-auto text-(--color-brand-black-light)"
+              />
+              <p className="text-(--color-brand-black-light) font-semibold">
+                Sign in using email
+              </p>
+            </Button>
+          </Field>
+          <div className="relative flex items-center justify-center py-2">
+            <hr className="w-full border-white/30" />
+            <p className="absolute self-center bg-slate-800 px-2 text-sm text-white/60 font-light">
+              or, sign in using the providers below
+            </p>
+          </div>
+          <Field>
+            <Button
+              type="button"
+              variant={"secondary"}
+              className="border-(--color-brand-teal) border rounded-lg gap-3 cursor-pointer hover:bg-(--color-brand-teal)/50 active:bg-(--color-brand-teal) active:text-(--color-brand-black-light)"
+              id="google-button"
+              onClick={() => handleSubmit("google-oauth2")}
+            >
+              <GoogleIcon />
+              <p>Sign in using Google</p>
+            </Button>
+          </Field>
+        </FieldGroup>
       </div>
     </main>
   );
