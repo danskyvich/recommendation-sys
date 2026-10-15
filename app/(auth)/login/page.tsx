@@ -1,6 +1,6 @@
 "use server"
 
-import LoginPage from "@/app/components/ui/login-page";
+import LoginPage from "@/app/features/auth/login-page";
 import { auth0 } from "@/app/lib/auth/auth0";
 import { redirect } from "next/navigation";
 
