@@ -44,6 +44,10 @@ export default function AppSidebar({
 
   const SETTINGS = [
     {
+      name: "General",
+      link: "/settings#general"
+    },
+    {
       name: "Profile",
       link: "/settings#profile",
     },
@@ -123,7 +127,7 @@ export default function AppSidebar({
           </SidebarGroup>
         </SidebarContent>
         <SidebarFooter className="relative flex w-full h-fit pt-3 gap-3 items-center">
-          <ProfileDialog user={user} />
+          <ProfileDialog user={user}  />
         </SidebarFooter>
         <SidebarRail className="cursor-pointer" />
       </Sidebar>

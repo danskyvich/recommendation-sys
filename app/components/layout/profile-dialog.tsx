@@ -14,10 +14,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
 import { useSidebar } from "@/components/ui/sidebar";
+import ProfileCard from "./profile-card";
 
 export default function ProfileDialog({ user }: { user: User }) {
   const name = user.nickname ?? user.name ?? user.email ?? "User";
-  const { state } = useSidebar();
 
   const DROPDOWN_CONTENT = [
     {
@@ -36,20 +36,8 @@ export default function ProfileDialog({ user }: { user: User }) {
 
   return (
     <DropdownMenuTrigger>
-      <Button className="flex w-full items-center gap-3 py-4 rounded-lg text-left outline-none cursor-pointer hover:bg-(--color-brand-black)/70">
-        <Avatar size={state !== "expanded" ? "sm" : "lg"} className="">
-          <AvatarImage src={user.picture} alt="" />
-          <AvatarFallback>{name[0].toUpperCase()}</AvatarFallback>
-        </Avatar>
-        {state === "expanded" && (
-          <>
-            <div className="flex flex-col">
-              <span className="text-sm font-semibold">{name}</span>
-              <span className="font-light text-[0.75rem]">{user.email}</span>
-            </div>
-            <ChevronsUpDown size={18} className="ml-auto min-w-3 h-auto" />
-          </>
-        )}
+      <Button className="flex w-full items-center gap-3 py-2 rounded-lg text-left outline-none cursor-pointer hover:bg-(--color-brand-black)/50">
+        <ProfileCard user={user} hideIcon={false}/>
       </Button>
 
       <DropdownMenu

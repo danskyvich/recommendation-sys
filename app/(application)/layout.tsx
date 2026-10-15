@@ -4,14 +4,15 @@ import { auth0 } from "../lib/auth/auth0"
 import { redirect } from "next/navigation";
 import { ReactNode } from "react";
 import Header from "../components/layout/header";
+import { getUser } from "../lib/auth/get-user";
 
 export default async function AppLayout({children}: {children: React.ReactNode}) {
 
-    const session = await auth0.getSession();
+    const { session } = await getUser();
     if (!session) redirect("/login");
 
     return (
-      <main className="flex w-screen h-screen bg-gray-900">
+      <main className="flex w-screen h-screen bg-black/45">
         <SidebarProvider defaultOpen className="w-fit">
           <AppSidebar user={session.user} />
         </SidebarProvider>
