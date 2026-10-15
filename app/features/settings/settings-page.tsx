@@ -1,15 +1,59 @@
 import ProfileCard from "@/app/components/layout/profile-card";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { User } from "@auth0/nextjs-auth0/types";
-import { LogOut } from "lucide-react";
+import { Eye, Lock, LogOut, Redo, Trash, X } from "lucide-react";
 import Link from "next/link";
+import { PreferenceChips } from "./components/preference-chips";
 
-export default function SettingsPage({user}: {user: User}) {
+export default function SettingsPage({user, genres}: {user: User, genres: any}) {
+
+  const PROFILE_SETTINGS = [
+    {
+      name: "Hide watched or rated movies",
+      description: "Hide movies that you had either watched or rated.",
+      value: "Hide movies",
+      icon: <Eye size={18} className="min-w-3 h-auto" />,
+      link: "/",
+    },
+    {
+      name: "Clear my ratings and watchlist",
+      description: "Clear rated movies and movies added in your watchlist",
+      value: "Clear ratings and watchlists",
+      icon: <X size={18} className="min-w-3 h-auto" />,
+      link: "/",
+    },
+    {
+      name: "Redo onboarding",
+      description:
+        "Allows you to rerun the onboarding process on the next successful sign in.",
+      value: "Redo onboarding",
+      icon: <Redo size={18} className="min-w-3 h-auto" />,
+      link: "/",
+    },
+  ];
+  const SECURITY_SETTINGS = [
+    {
+      name: "Enable two-factor authentication",
+      description: "Use an authenticator app to enable 2FA on your account.",
+      value: "Enable 2FA",
+      icon: <Lock size={18} className="min-w-3 h-auto" />,
+      className:
+        "hover:bg-white/25 active:border-white active:bg-white active:text-black border-white",
+      link: "/",
+    },
+    {
+      name: "Delete your account",
+      description: null,
+      value: "Delete account",
+      icon: <Trash size={18} className="min-w-3 h-auto" />,
+      className:
+        "border-red-400 text-red-400 hover:bg-red-400/25 active:bg-red-400 active:border-red-800 active:text-red-800",
+      link: "/",
+    },
+  ];
   return (
-    <main className="flex flex-col w-full h-full overflow-y-auto overflow-x-hidden px-[5dvw] sm:px-[10dvw] xl:px-[20dvw] pt-10 gap-3">
+    <main className="flex flex-col w-full h-full overflow-y-auto overflow-x-hidden px-[5dvw] sm:px-[10dvw] xl:px-[20dvw] pt-10 pb-[5%] gap-3">
       {/* General settings */}
       <section className="flex flex-col w-full h-fit">
         <h1 className="text-2xl font-semibold" id="general">
@@ -38,34 +82,81 @@ export default function SettingsPage({user}: {user: User}) {
 
         {/* Preferences */}
         <div className="flex flex-col w-full">
-          <h2 className="text-xl pb-3">Preferences</h2>
+          <article className="py-2">
+            <h2 className="text-xl ">Preferences</h2>
+            <h3 className="text-sm text-white/70 font-light pb-3">
+              Choose preferred and excluded genres
+            </h3>
+          </article>
 
-          {/* Liked */}
-          <Label>Liked</Label>
-          <ToggleGroup variant={"default"} orientation="horizontal">
-            <ToggleGroupItem>A</ToggleGroupItem>
-            <ToggleGroupItem>B</ToggleGroupItem>
-            <ToggleGroupItem>C</ToggleGroupItem>
-          </ToggleGroup>
-
-          {/* Avoid */}
-          <Label>Excluded</Label>
-          <ToggleGroup variant={"default"} orientation="horizontal">
-            <ToggleGroupItem>A</ToggleGroupItem>
-            <ToggleGroupItem>B</ToggleGroupItem>
-            <ToggleGroupItem>C</ToggleGroupItem>
-          </ToggleGroup>
+          <article className="flex flex-col w-full gap-5">
+            <PreferenceChips data={genres} label="Liked" />
+            <PreferenceChips data={genres} label="Excluded" />
+          </article>
         </div>
       </section>
 
-      <h1 className="text-2xl font-semibold" id="profile">
-        Your profile
-      </h1>
-      <hr className="border-white/25" />
-      <h1 className="text-2xl font-semibold" id="security">
-        Account security
-      </h1>
-      <hr className="border-white/25" />
+      {/* Profile */}
+      <section className="flex flex-col w-full h-fit pt-10">
+        <h1 className="text-2xl font-semibold" id="profile">
+          Your profile
+        </h1>
+        <hr className="border-white/25" />
+
+        <article className="flex flex-col w-full h-fit py-5 gap-5">
+          {PROFILE_SETTINGS.map((item, id) => (
+            <div className="flex w-full justify-between items-center" key={id}>
+              <div className="flex flex-col">
+                <p className="text-md font-semibold">{item.name}</p>
+                <p className="text-[0.8rem] text-white/70">
+                  {item.description}
+                </p>
+              </div>
+
+              <Button
+                type="button"
+                className="border border-white cursor-pointer hover:bg-white/25 active:border-white active:bg-white active:text-black"
+              >
+                <Link href={item.link} className="flex w-fit gap-2">
+                  {item.icon}
+                  <p>{item.value}</p>
+                </Link>
+              </Button>
+            </div>
+          ))}
+        </article>
+      </section>
+
+      {/* Security */}
+      <section className="flex flex-col w-full h-fit pt-10">
+        <h1 className="text-2xl font-semibold" id="security">
+          Account security
+        </h1>
+        <hr className="border-white/25" />
+
+        <article className="flex flex-col w-full h-fit py-5 gap-5">
+          {SECURITY_SETTINGS.map((item, id) => (
+            <div className="flex w-full justify-between items-center" key={id}>
+              <div className="flex flex-col">
+                <p className="text-md font-semibold">{item.name}</p>
+                <p className="text-[0.8rem] text-white/70">
+                  {item.description}
+                </p>
+              </div>
+
+              <Button
+                type="button"
+                className={`border cursor-pointer ${item.className}`}
+              >
+                <Link href={item.link} className="flex w-fit gap-2">
+                  {item.icon}
+                  <p>{item.value}</p>
+                </Link>
+              </Button>
+            </div>
+          ))}
+        </article>
+      </section>
     </main>
   );
 }
