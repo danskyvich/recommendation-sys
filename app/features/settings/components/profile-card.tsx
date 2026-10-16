@@ -14,8 +14,8 @@ export default function ProfileCard({
   return (
     <div className="flex w-full gap-3 justify-between">
       <div className="flex w-fit gap-3">
-        <Avatar size="lg" className="">
-          <AvatarImage src={user.picture} alt="" />
+        <Avatar size="lg">
+          <AvatarImage src={user.picture} alt="user_avatar" />
           <AvatarFallback>{name[0].toUpperCase()}</AvatarFallback>
         </Avatar>
         <div>
