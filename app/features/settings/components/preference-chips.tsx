@@ -14,7 +14,7 @@ export function PreferenceChips({data, label}: {data: Genre[], label: string}) {
                     <p>{item.name}</p>
                 </ToggleGroupItem>
             ))
-        };
+        }
         </ToggleGroup>
       </section>
     )

@@ -1,12 +1,13 @@
-import ProfileCard from "@/app/components/layout/profile-card";
+import ProfileCard from "@/app/features/settings/components/profile-card";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { User } from "@auth0/nextjs-auth0/types";
 import { Eye, Lock, LogOut, Redo, Trash, X } from "lucide-react";
 import Link from "next/link";
 import { PreferenceChips } from "./components/preference-chips";
+import { Genre } from "@/types";
 
-export default function SettingsPage({user, genres}: {user: User, genres: any}) {
+export default function SettingsPage({user, genres}: {user: User, genres: Genre[]}) {
 
   const PROFILE_SETTINGS = [
     {
@@ -117,7 +118,7 @@ export default function SettingsPage({user, genres}: {user: User, genres: any}) 
                 type="button"
                 className="border border-white cursor-pointer hover:bg-white/25 active:border-white active:bg-white active:text-black"
               >
-                <Link href={item.link} className="flex w-fit gap-2">
+                <Link href={item.link} className="flex w-fit gap-2 items-center">
                   {item.icon}
                   <p>{item.value}</p>
                 </Link>
@@ -148,7 +149,7 @@ export default function SettingsPage({user, genres}: {user: User, genres: any}) 
                 type="button"
                 className={`border cursor-pointer ${item.className}`}
               >
-                <Link href={item.link} className="flex w-fit gap-2">
+                <Link href={item.link} className="flex w-fit gap-2 items-center">
                   {item.icon}
                   <p>{item.value}</p>
                 </Link>

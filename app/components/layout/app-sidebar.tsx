@@ -13,7 +13,7 @@ export default function AppSidebar({
   user: User;
 }) {
   const [expanded, setExpanded] = useState<boolean>(true);
-  const { state, setOpen, open } = useSidebar();
+  const { state } = useSidebar();
 
   const SIDEBAR_CONTENT = [
     {
