@@ -1,8 +1,7 @@
 import AppSidebar from "@/app/components/layout/app-sidebar"
 import { SidebarProvider } from "@/components/ui/sidebar"
-import { auth0 } from "../lib/auth/auth0"
 import { redirect } from "next/navigation";
-import { ReactNode } from "react";
+import { Suspense } from "react";
 import Header from "../components/layout/header";
 import { getUser } from "../lib/auth/get-user";
 
@@ -13,13 +12,15 @@ export default async function AppLayout({children}: {children: React.ReactNode})
 
     return (
       <main className="flex w-screen h-screen bg-black/45">
-        <SidebarProvider defaultOpen className="w-fit">
-          <AppSidebar user={session.user} />
-        </SidebarProvider>
-        <div className="flex flex-col w-full h-full">
-          <Header />
-          <div className="flex w-full h-[95%]">{children}</div>
-        </div>
+        <Suspense>
+          <SidebarProvider defaultOpen className="w-fit">
+            <AppSidebar user={session.user} />
+          </SidebarProvider>
+          <div className="flex flex-col w-full h-full">
+            <Header />
+            <div className="flex w-full h-[95%]">{children}</div>
+          </div>
+        </Suspense>
       </main>
     );
 }

@@ -5,8 +5,9 @@ import { User } from "@auth0/nextjs-auth0/types";
 import { Eye, Lock, LogOut, Redo, Trash, X } from "lucide-react";
 import Link from "next/link";
 import { PreferenceChips } from "./components/preference-chips";
+import { Genre } from "@/types";
 
-export default function SettingsPage({user, genres}: {user: User, genres: any}) {
+export default function SettingsPage({user, genres}: {user: User, genres: Genre[]}) {
 
   const PROFILE_SETTINGS = [
     {
@@ -34,17 +35,8 @@ export default function SettingsPage({user, genres}: {user: User, genres: any}) 
   ];
   const SECURITY_SETTINGS = [
     {
-      name: "Enable two-factor authentication",
-      description: "Use an authenticator app to enable 2FA on your account.",
-      value: "Enable 2FA",
-      icon: <Lock size={18} className="min-w-3 h-auto" />,
-      className:
-        "hover:bg-white/25 active:border-white active:bg-white active:text-black border-white",
-      link: "/",
-    },
-    {
       name: "Delete your account",
-      description: null,
+      description: "This action is irreversible",
       value: "Delete account",
       icon: <Trash size={18} className="min-w-3 h-auto" />,
       className:

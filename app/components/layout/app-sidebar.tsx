@@ -1,11 +1,13 @@
 "use client"
 
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupAction, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuBadge, SidebarMenuButton, SidebarMenuItem, SidebarRail, SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
-import { ChevronDown, ChevronRight, Eye, Film, Home, Star, Toolbox, User2 } from "lucide-react";
+import { ChevronDown, ChevronRight, ChevronsUpDown, Eye, Home, LogOut, Star, Toolbox, UserIcon } from "lucide-react";
 import Link from "next/link";
-import { User } from "@auth0/nextjs-auth0/types";
-import ProfileDialog from "./profile-dialog";
 import {useState } from "react";
+import { DropdownMenu, DropdownMenuGroup, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import ProfileCard from "./profile-card";
+import { User } from "@auth0/nextjs-auth0/types";
 
 export default function AppSidebar({
   user,
@@ -13,7 +15,7 @@ export default function AppSidebar({
   user: User;
 }) {
   const [expanded, setExpanded] = useState<boolean>(true);
-  const { state, setOpen, open } = useSidebar();
+  const { state } = useSidebar();
 
   const SIDEBAR_CONTENT = [
     {
@@ -56,6 +58,21 @@ export default function AppSidebar({
       link: "/settings#security",
     },
   ];
+
+  const DROPDOWN_MENU = [
+    {
+      name: "Log out",
+      id: "log-out",
+      icon: <LogOut size={18} className="min-w-3 h-auto"/>,
+      link: "/auth/logout",
+    },
+    {
+      name: "Profile",
+      id: "profile",
+      icon: <UserIcon size={18} className="min-w-3 h-auto"/>,
+      link: "/settings#profile",
+    }
+  ]
 
   return (
     <div className="flex h-full">
@@ -126,8 +143,37 @@ export default function AppSidebar({
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>
-        <SidebarFooter className="relative flex w-full h-fit pt-3 gap-3 items-center">
-          <ProfileDialog user={user}  />
+        <SidebarFooter className="relative flex flex-row w-full h-fit items-center justify-between">
+          <DropdownMenuTrigger>
+            <Button className="flex w-full my-3 items-center justify-between rounded-lg px-2 py-7 outline-none cursor-pointer hover:bg-(--color-brand-black)/70">
+              {state === "expanded" && <ProfileCard user={user} />}
+              <ChevronsUpDown size={18} className="min-w-3 h-auto" />
+            </Button>
+
+            <DropdownMenu
+              placement="right"
+              className="w-56 bg-slate-950 border border-white/25 rounded-lg"
+            >
+              <DropdownMenuGroup>
+                <DropdownMenuItem>
+                  <ProfileCard user={user} />
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator className="border-0 bg-white/15" />
+              <DropdownMenuGroup>
+                {DROPDOWN_MENU.map((item) => (
+                  <DropdownMenuItem
+                    key={item.id}
+                    href={item.link}
+                    className="flex w-full cursor-pointer"
+                  >
+                    {item.icon}
+                    <span className="text-sm">{item.name}</span>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuGroup>
+            </DropdownMenu>
+          </DropdownMenuTrigger>
         </SidebarFooter>
         <SidebarRail className="cursor-pointer" />
       </Sidebar>

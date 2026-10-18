@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   Carousel,
@@ -10,51 +10,39 @@ import {
 import Image from "next/image";
 import { faker } from "@faker-js/faker";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Film, StarIcon } from "lucide-react";
 import { generateStars } from "@/app/utils/generateStars";
 
 export default function DashboardPage() {
-  const movie_names = 
-  [
-    "The Shawshank Redemption",
-    "The Godfather",
-    "Inception",
-    "Verity",
-    "Backrooms",
-    "Parasite",
-    "Casablanca",
-    "Pulp Fiction",
-    "Mean Girls",
-    "Legally Blonde",
-    "Psycho",
-    "Breaking bad",
-    "Paddington",
-    "Bridgerton"
-  ]
+
   const slides = Array.from({ length: 14 }, (_, index) => ({
     id: index + 1,
     name: `item ${index + 1}`,
     rating: faker.number.int({ max: 5 }),
-    movie_names: faker.helpers.arrayElement(movie_names),
+    movie_names: faker.lorem.words(),
     movie_description: faker.lorem.paragraph(),
     image: faker.image.url(),
     person: faker.person.fullName(),
     date: faker.date.recent(),
   }));
 
+  const forYou = Array.from( { length: 20 }, (_, index) => ({
+    id: index + 1,
+    name: `item ${index + 1}`,
+    movie_name: faker.lorem.word(),
+
+  }));
+
   const [selectedItem, setSelectedItem] = useState(slides[0]);
 
   return (
     <main className="flex flex-col w-full h-full gap-5 overflow-y-auto overflow-x-hidden">
-
       {/* Trending Now! */}
       <section className="flex flex-col w-full h-fit">
         {/* Thumbnail */}
         <div className="relative flex w-full h-120 rounded-md">
           <div className="flex w-full h-full z-50 bg-linear-180 from-black/30 to-black">
             <article className="self-end px-5 py-3">
-              <p className="text-4xl font-semibold">
+              <p className="text-4xl font-semibold capitalize">
                 {selectedItem.movie_names}
               </p>
               <div className="flex items-center gap-2 w-fit h-full py-2">
@@ -103,10 +91,10 @@ export default function DashboardPage() {
       </section>
 
       <section className="flex flex-col w-full h-fit gap-2">
-            <h1 className="px-5 text-2xl font-bold">For you</h1>
-            <div className="">
+        <h1 className="px-5 text-2xl font-bold">For you</h1>
+        <div className="flex w-full h-fit px-5">
 
-            </div>
+        </div>
       </section>
     </main>
   );

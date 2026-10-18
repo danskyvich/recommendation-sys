@@ -3,7 +3,7 @@ import { Bell, Earth, Film, SearchIcon } from "lucide-react";
 
 export default function Header() {
     return (
-      <header className="flex items-center px-5 py-1 justify-between w-full h-[5%] bg-black/35 border-b border-gray-800">
+      <header className="flex items-center px-5 py-1 justify-between w-full h-[5%] bg-black/35 border-b border-gray-800 backdrop-blur-2xl">
         <div className="flex gap-2">
           <Film size={18} className="min-w-3 h-auto"/>
             <p className="text-2xl font-semibold">Film.io</p>
