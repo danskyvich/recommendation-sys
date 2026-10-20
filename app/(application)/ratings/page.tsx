@@ -1,4 +1,4 @@
-import RatingsPage from "@/app/components/ui/ratings";
+import RatingsPage from "@/app/features/ratings/ratings-page";
 
 export default function Ratings() {
     return(

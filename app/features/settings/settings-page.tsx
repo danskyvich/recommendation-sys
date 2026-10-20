@@ -35,17 +35,8 @@ export default function SettingsPage({user, genres}: {user: User, genres: Genre[
   ];
   const SECURITY_SETTINGS = [
     {
-      name: "Enable two-factor authentication",
-      description: "Use an authenticator app to enable 2FA on your account.",
-      value: "Enable 2FA",
-      icon: <Lock size={18} className="min-w-3 h-auto" />,
-      className:
-        "hover:bg-white/25 active:border-white active:bg-white active:text-black border-white",
-      link: "/",
-    },
-    {
       name: "Delete your account",
-      description: null,
+      description: "This action is irreversible",
       value: "Delete account",
       icon: <Trash size={18} className="min-w-3 h-auto" />,
       className:
@@ -56,7 +47,7 @@ export default function SettingsPage({user, genres}: {user: User, genres: Genre[
   return (
     <main className="flex flex-col w-full h-full overflow-y-auto overflow-x-hidden px-[5dvw] sm:px-[10dvw] xl:px-[20dvw] pt-10 pb-[5%] gap-3">
       {/* General settings */}
-      <section className="flex flex-col w-full h-fit">
+      <section className="flex flex-col w-full h-fit mt-15">
         <h1 className="text-2xl font-semibold" id="general">
           General settings
         </h1>
@@ -65,7 +56,7 @@ export default function SettingsPage({user, genres}: {user: User, genres: Genre[
         {/* Profile card */}
         <Card size={"default"} className="w-full bg-slate-900 my-4 rounded-xl">
           <CardContent className="flex w-full justify-between">
-            <ProfileCard user={user} hideIcon={true} />
+            <ProfileCard user={user}/>
             <Button
               type="button"
               className="border border-red-400 rounded-lg hover:bg-red-400/25 cursor-pointer active:bg-red-400/50"

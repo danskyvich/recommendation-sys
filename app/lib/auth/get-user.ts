@@ -4,6 +4,6 @@ import { redirect } from "next/navigation";
 
 export const getUser = cache(async () => {
     const session = await auth0.getSession();
-    if (!session) redirect("/login");
+    if (!session) redirect("/");
     return {user: session.user, session };
 });

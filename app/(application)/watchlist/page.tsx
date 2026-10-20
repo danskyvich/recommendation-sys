@@ -1,6 +1,14 @@
-import WatchListPage from "@/app/components/ui/watchlist-page";
+"use server"
 
-export default function Watchlist() {
+import WatchListPage from "@/app/features/watchlist/watchlist-page";
+import { auth0 } from "@/app/lib/auth/auth0";
+import { redirect } from "next/navigation";
+
+export default async function Watchlist() {
+
+    const session = await auth0.getSession();
+    if (!session) redirect("/login");
+
     return(
         <WatchListPage/>
     )
