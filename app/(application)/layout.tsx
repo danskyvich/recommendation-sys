@@ -3,22 +3,21 @@ import { SidebarProvider } from "@/components/ui/sidebar"
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import Header from "../components/layout/header";
-import { getUser } from "../lib/auth/get-user";
+import { auth0 } from "../lib/auth/auth0";
 
 export default async function AppLayout({children}: {children: React.ReactNode}) {
 
-    const { session } = await getUser();
-    if (!session) redirect("/login");
+    const session = await auth0.getSession();
 
     return (
-      <main className="flex w-screen h-screen bg-black/45">
+      <main className="flex w-full h-dvh overflow-hidden bg-black/45">
         <Suspense>
-          <SidebarProvider defaultOpen className="w-fit">
-            <AppSidebar user={session.user} />
-          </SidebarProvider>
-          <div className="flex flex-col w-full h-full">
-            <Header />
-            <div className="flex w-full h-[95%]">{children}</div>
+          <Header />
+          <div className="flex w-full h-full min-h-0">
+            <SidebarProvider defaultOpen className="w-fit h-full min-h-0">
+              <AppSidebar user={session?.user} />
+            </SidebarProvider>
+            <div className="flex flex-1 min-w-0 h-full">{children}</div>
           </div>
         </Suspense>
       </main>

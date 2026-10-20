@@ -2,9 +2,6 @@ import type { NextConfig } from "next";
 import { hostname } from "os";
 
 const nextConfig: NextConfig = {
-  async redirects() {
-    return [{ source: "/", destination: "/login", permanent: false }]
-  },
   /* config options here */
   experimental: {
     agentFeedback: true,
@@ -27,6 +24,10 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/**',
       },
+      {
+        protocol: "https",
+        hostname: "fastly.picsum.photos"
+      }
     ],
   },
 };

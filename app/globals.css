@@ -16,6 +16,10 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --animate-marquee: marquee 70s linear infinite;
+  @keyframes marquee {
+    to { transform: translateX(-50%) }
+  }
 }
 
 body {
