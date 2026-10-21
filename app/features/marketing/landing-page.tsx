@@ -55,7 +55,7 @@ export default function LandingPage() {
       {/* Moving movie pictures */}
       <section className="w-full overflow-hidden">
         <div className="flex w-max animate-marquee">
-          {[...movie_slides, ...movie_slides].map((item) => (
+          {[...movie_slides].map((item) => (
             <div className="relative mr-5 h-85 w-56 shrink-0" key={item.id}>
               <Image
                 src={item.image}

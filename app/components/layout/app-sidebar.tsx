@@ -36,7 +36,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import ProfileCard from "./profile-card";
+import ProfileCard from "@/app/features/settings/components/profile-card";
 import type { User } from "@auth0/nextjs-auth0/types";
 import { redirect } from "next/navigation";
 

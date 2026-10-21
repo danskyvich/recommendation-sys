@@ -46,20 +46,7 @@ export default function DashboardPage({user}: {user: User | undefined}) {
         <MovieCard
           movie={selectedMovie}
           onClose={() => setSelectedMovie(null)}
-          action={
-            user && (
-              <>
-                <Button
-                  className="border border-yellow-400 items-center justify-center hover:bg-yellow-400/25 cursor-pointer"
-                  type="submit"
-                  onClick={() => redirect("/watchlist")}
-                >
-                  <Tv size={18} className="min-w-2 h-auto text-yellow-400" />
-                  <p className="text-yellow-400">Add to watchlist</p>
-                </Button>
-              </>
-            )
-          }
+          action={user ? "logged-in" : "logged-out"}
         />
       )}
 

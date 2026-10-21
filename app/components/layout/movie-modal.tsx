@@ -2,20 +2,26 @@
 import { generateStars } from "@/app/utils/generateStars";
 import { Button } from "@/components/ui/button";
 import { Movie } from "@/types";
-import { X } from "lucide-react";
+import { Check, Tv, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import { useState } from "react";
 import { createPortal } from "react-dom";
 
 export default function MovieModal({
   movie,
-  action,
+  action = "logged-out",
   onClose,
 }: {
   movie: Movie;
-  action?: React.ReactNode;
+  action?: "logged-out" | "logged-in";
   onClose: () => void;
 }) {
+
+  const [addedToWatchlist, setAddedToWatchlist] = useState<boolean>(false);
+  const [isRated, setIsRated] = useState<boolean>(false);
+
   return createPortal(
     <div className="fixed inset-0 z-60 flex items-center justify-center bg-black/50">
       <div
@@ -34,41 +40,75 @@ export default function MovieModal({
           </div>
 
           <div className="flex flex-col w-full h-full">
-            <h1 className="text-2xl md:text-3xl lg:text-4xl font-sans font-semibold text-white">
-              {movie.title}
-            </h1>
+            <div className="flex w-full justify-between">
+              <h1 className="text-2xl lg:text-3xl font-sans font-semibold text-white">
+                {movie.title}
+              </h1>
+              <X size={18} className="min-w-3 h-auto cursor-pointer" onClick={onClose}/>
+            </div>
+
+            {/* Ratings, duration, year */}
             <div className="flex gap-5 mt-1 items-center">
               <div className="flex items-center">
                 {generateStars(movie.rating)}
-                <h2 className="ml-2 text-sm md:text-lg text-white/75">
+                <h2 className="ml-2 text-sm md:text-md text-white/75">
                   {movie.rating}/5
                 </h2>
               </div>
 
-              <h2 className="text-sm md:text-lg text-white/75">{movie.time}</h2>
-              <h2 className="text-sm md:text-lg text-white/75">{movie.year}</h2>
+              <h2 className="text-sm md:text-md text-white/75">{movie.time}</h2>
+              <h2 className="text-sm md:text-md text-white/75">{movie.year}</h2>
             </div>
 
-            <p className="text-sm md:text-lg text-white/95 mt-3">
+            <p className="text-md lg:text-lg text-white/95 mt-3">
               {movie.description}
             </p>
           </div>
         </div>
         <div className="flex flex-col w-full h-fit">
-          <div className="flex flex-col w-full border-y border-slate-600/75 my-2 py-1 gap-1">
-            <p className="font-semibold text-sm md:text-lg">
+          <div className="flex flex-col w-full border-y border-slate-600/75 my-2 py-1 tracking-tight">
+            <p className="font-semibold text-md lg:text-lg">
               Producer: <span className="font-light">{movie.producer}</span>
             </p>
-            <p className="font-semibold text-sm md:text-lg">
+            <p className="font-semibold text-md lg:text-lg">
               Stars: <span className="font-light">{movie.stars}</span>
             </p>
           </div>
           <div className="flex w-full h-fit gap-4 items-center">
-            {action}
-            <Button type="submit" onClick={onClose} className="border-white border gap-1 text-white cursor-pointer hover:bg-white/25">
-              <X size={18} className="min-w-3 h-auto text-white"/>
-              Close
-            </Button>
+            {action === "logged-in" && (
+              <>
+                {/* Add to watchlist */}
+                <Button
+                  className={`${addedToWatchlist && "bg-yellow-400"} border border-yellow-400 items-center justify-center hover:bg-yellow-400/25 cursor-pointer`}
+                  type="submit"
+                  onClick={() => setAddedToWatchlist(prev => !prev)}
+                >
+                  {
+                    addedToWatchlist ? <Check size={18} className="min-w-3 h-auto text-black"/> : <Tv size={18} className="min-w-3 h-auto text-yellow-400"/>
+                  }
+                  <p className={`${addedToWatchlist ? "text-black" : "text-yellow-400"}`}>Add to watchlist</p>
+                </Button>
+
+                {/* Rating button */}
+                <Button
+                  className={`${isRated && "bg-purple-600"} border border-purple-600 items-center justify-center hover:bg-purple-600/25 text-purple-600 cursor-pointer`}
+                  type="submit"
+                  onClick={() => setIsRated((prev) => !prev)}
+                >
+                  {isRated ? (
+                    <Check size={18} className="min-w-3 h-auto text-white" />
+                  ) : (
+                    <Tv
+                      size={18}
+                      className="min-w-2 h-auto text-purple-600"
+                    />
+                  )}
+                  <p className={`${isRated ? "text-white" : "text-purple-600"}`}>
+                    Add to watchlist
+                  </p>
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </div>

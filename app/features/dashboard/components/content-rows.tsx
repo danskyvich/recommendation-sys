@@ -36,9 +36,10 @@ export default function ContentRow({
                   sizes="(min-width: 1024px) 16vw, (min-width: 768px) 20vw, 33vw"
                   className="object-cover"
                 />
-                <div className="pointer-events-none absolute inset-0 bg-linear-to-b from-transparent to-black/75 opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
+                <div className="pointer-events-none absolute inset-0 flex bg-linear-to-b from-transparent to-black transition-opacity duration-200 opacity-100">
+                  <p className="self-end m-3 z-50 truncate text-sm">{m.title}</p>
+                </div>
               </div>
-              <p className="mt-2 truncate text-sm">{m.title}</p>
             </CarouselItem>
           ))}
         </CarouselContent>
