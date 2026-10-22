@@ -12,6 +12,7 @@
     "@auth0/auth0-auth-js": "^1.16.1",
     "@auth0/nextjs-auth0": "^4.32.0",
     "@hookform/resolvers": "^5.9.1",
+    "@neondatabase/serverless": "^1.2.0",
     "add": "^2.0.9",
     "class-variance-authority": "^0.7.1",
     "cn": "^0.4.0",

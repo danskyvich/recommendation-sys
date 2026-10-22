@@ -44,7 +44,11 @@ export default function MovieModal({
               <h1 className="text-2xl font-sans font-semibold text-white">
                 {movie.title}
               </h1>
-              <X size={18} className="min-w-3 h-auto cursor-pointer" onClick={onClose}/>
+              <X
+                size={18}
+                className="min-w-3 h-auto cursor-pointer"
+                onClick={onClose}
+              />
             </div>
 
             {/* Ratings, duration, year */}
@@ -60,9 +64,7 @@ export default function MovieModal({
               <h2 className="text-sm md:text-md text-white/75">{movie.year}</h2>
             </div>
 
-            <p className="text-md text-white/95 mt-3">
-              {movie.description}
-            </p>
+            <p className="text-md text-white/95 mt-3">{movie.description}</p>
           </div>
         </div>
         <div className="flex flex-col w-full h-fit">
@@ -81,31 +83,35 @@ export default function MovieModal({
                 <Button
                   className={`${addedToWatchlist && "bg-yellow-400"} border border-yellow-400 items-center justify-center hover:bg-yellow-400/25 cursor-pointer`}
                   type="submit"
-                  onClick={() => setAddedToWatchlist(prev => !prev)}
+                  onClick={() => setAddedToWatchlist((prev) => !prev)}
                 >
-                  {
-                    addedToWatchlist ? <Check size={18} className="min-w-3 h-auto text-black"/> : <Tv size={18} className="min-w-3 h-auto text-yellow-400"/>
-                  }
-                  <p className={`${addedToWatchlist ? "text-black" : "text-yellow-400"}`}>Add to watchlist</p>
+                  {addedToWatchlist ? (
+                    <Check size={18} className="min-w-3 h-auto text-black" />
+                  ) : (
+                    <Tv size={18} className="min-w-3 h-auto text-yellow-400" />
+                  )}
+                  <p
+                    className={`${addedToWatchlist ? "text-black" : "text-yellow-400"}`}
+                  >
+                    Add to watchlist
+                  </p>
                 </Button>
 
                 {/* Rating button */}
                 <Button
-                  className={`${isRated && "bg-purple-600"} border border-purple-600 items-center justify-center hover:bg-purple-600/25 text-purple-600 cursor-pointer`}
-                  type="submit"
+                  className={`flex w-fit border border-yellow-400 cursor-pointer hover:bg-yellow-400/25`}
+                  type="button"
                   onClick={() => setIsRated((prev) => !prev)}
                 >
                   {isRated ? (
-                    <Check size={18} className="min-w-3 h-auto text-white" />
-                  ) : (
-                    <Tv
+                    <Check
                       size={18}
-                      className="min-w-2 h-auto text-purple-600"
+                      className={`${isRated ? "text-yellow-400" : "text-yellow-400"} min-w-3 h-auto`}
                     />
+                  ) : (
+                    <p className="text-sm text-yellow-400">Rate:</p>
                   )}
-                  <p className={`${isRated ? "text-white" : "text-purple-600"}`}>
-                    Add to watchlist
-                  </p>
+                  <div className={`w-full h-full flex items-center`}>{generateStars(3)}</div>
                 </Button>
               </>
             )}
