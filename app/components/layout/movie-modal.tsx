@@ -25,11 +25,11 @@ export default function MovieModal({
   return createPortal(
     <div className="fixed inset-0 z-60 flex items-center justify-center bg-black/50">
       <div
-        className="flex w-120 md:w-175 flex-col gap-3 rounded-lg border border-white/35 bg-black p-4"
+        className="flex w-120 md:w-150 flex-col gap-3 rounded-lg border border-white/35 bg-black p-4"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex w-full h-fit rounded-l gap-5">
-          <div className="relative aspect-2/3 flex w-85">
+          <div className="relative aspect-2/3 flex w-55">
             <div className="bg-linear-180 from-transparent to-black/55 z-50 w-full h-full" />
             <Image
               src={movie.image}
@@ -41,7 +41,7 @@ export default function MovieModal({
 
           <div className="flex flex-col w-full h-full">
             <div className="flex w-full justify-between">
-              <h1 className="text-2xl lg:text-3xl font-sans font-semibold text-white">
+              <h1 className="text-2xl font-sans font-semibold text-white">
                 {movie.title}
               </h1>
               <X size={18} className="min-w-3 h-auto cursor-pointer" onClick={onClose}/>
@@ -60,7 +60,7 @@ export default function MovieModal({
               <h2 className="text-sm md:text-md text-white/75">{movie.year}</h2>
             </div>
 
-            <p className="text-md lg:text-lg text-white/95 mt-3">
+            <p className="text-md text-white/95 mt-3">
               {movie.description}
             </p>
           </div>

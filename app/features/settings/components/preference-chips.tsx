@@ -3,7 +3,6 @@ import { Genre } from "@/types";
 import { Label } from "@/components/ui/label";
 
 export function PreferenceChips({data, label}: {data: Genre[], label: string}) {
-    
     return (
       <section>
         <Label className="pb-2 pt-2 text-md font-sans">{label}</Label>
