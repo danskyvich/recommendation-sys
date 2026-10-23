@@ -11,34 +11,26 @@ import { useEffect, useState } from "react";
 import { generateStars } from "@/app/utils/generateStars";
 import { User } from "@auth0/nextjs-auth0/types";
 import ContentRow from "./components/content-rows";
-import { GENRES, placeholderMovies } from "./data";
-import { Movie } from "@/types";
 import MovieCard from "@/app/components/layout/movie-modal";
-import { Button } from "@/components/ui/button";
-import { Tv } from "lucide-react";
-import { redirect } from "next/navigation";
+import { MovieItem } from "@/types";
 
-faker.seed(1);
+interface DashboardProps {
+  user: User | undefined,
+  trending: MovieItem[],
+  topRated: MovieItem[],
+}
 
-const slides = Array.from({ length: 14 }, (_, index) => ({
-  id: index + 1,
-  name: `item ${index + 1}`,
-  rating: faker.number.int({ max: 5 }),
-  movie_names: faker.lorem.words(),
-  movie_description: faker.lorem.paragraph(),
-  image: faker.image.url(),
-  person: faker.person.fullName(),
-  date: faker.date.recent({ refDate: "2026-01-01"}),
-}));
-
-export default function DashboardPage({user}: {user: User | undefined}) {
+export default function DashboardPage({user, trending, topRated}: DashboardProps) {
 
   useEffect(() => {
     document.title = "Film.io - Home";
   }, []);
 
-  const [selectedItem, setSelectedItem] = useState(slides[0]);
-  const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
+  const [pickedItem, setPickedItem] = useState<MovieItem | null>(null);
+  const [selectedMovie, setSelectedMovie] = useState<MovieItem | null>(null);
+
+  // Defaults to the first trending movie until the user clicks one
+  const selectedItem = pickedItem ?? trending[0] ?? null;
 
   return (
     <main className="flex flex-col z-0 w-full h-full gap-5 overflow-y-auto overflow-x-hidden">
@@ -56,24 +48,34 @@ export default function DashboardPage({user}: {user: User | undefined}) {
         <div className="relative flex w-full h-80 md:h-120 rounded-md">
           <div className="flex w-full h-full z-50 bg-linear-180 from-black/30 to-black">
             <article className="self-end px-5 py-3">
+
+              {/* Title */}
               <p className="text-4xl font-semibold capitalize">
-                {selectedItem.movie_names}
+                {selectedItem?.title}
               </p>
+
+              {/* Ratings */}
               <div className="flex items-center gap-2 w-fit h-full py-2">
-                <p>{selectedItem.rating}/5</p>
-                <div className="flex">{generateStars(selectedItem.rating)}</div>
+                <p>{Math.floor(selectedItem?.vote_average ?? 0)}/10</p>
+                <div className="flex">
+                  {generateStars(Math.floor(selectedItem?.vote_average ?? 0))}
+                </div>
               </div>
-              <p className="text-md font-sans font-light w-full md:w-1/2">
-                {selectedItem.movie_description}
+
+              {/* Description */}
+              <p className="text-md font-sans font-light w-full md:w-[75%]">
+                {selectedItem?.overview}
               </p>
             </article>
           </div>
-          <Image
-            src={selectedItem.image}
-            alt={String(selectedItem.id)}
-            fill
-            className="object-cover"
-          />
+          {selectedItem.poster_path && (
+            <Image
+              src={selectedItem?.poster_path}
+              alt={String(selectedItem?.id)}
+              fill
+              className="object-cover"
+            />
+          )}
         </div>
 
         {/* Carousel */}
@@ -85,16 +87,16 @@ export default function DashboardPage({user}: {user: User | undefined}) {
           className="mx-3"
         >
           <CarouselContent>
-            {slides.map((item) => (
+            {trending.map((item) => (
               <CarouselItem
                 key={item.id}
                 className="basis-1/3 md:basis-1/5 lg:basis-1/6 cursor-pointer"
-                onClick={() => setSelectedItem(item)}
+                onClick={() => setPickedItem(item)}
               >
                 <div className="relative aspect-2/3 overflow-hidden rounded-lg">
                   <Image
-                    src={item.image}
-                    alt={item.name}
+                    src={item.poster_path!}
+                    alt={item.title}
                     fill
                     className="object-cover"
                   />
@@ -106,6 +108,15 @@ export default function DashboardPage({user}: {user: User | undefined}) {
       </section>
 
       <section className="flex flex-col w-full h-fit my-5 mx-3">
+        <ContentRow
+          title="Top rated"
+          movie={topRated}
+          onChosenMovie={setSelectedMovie}
+        />
+      </section>
+
+      {/*}
+      <section className="flex flex-col w-full h-fit my-5 mx-3">
         {user && (
           <ContentRow
             title="Recommended for you"
@@ -113,14 +124,6 @@ export default function DashboardPage({user}: {user: User | undefined}) {
             onChosenMovie={setSelectedMovie}
           />
         )}
-      </section>
-
-      <section className="flex flex-col w-full h-fit my-5 mx-3">
-        <ContentRow
-          title="Top rated"
-          movies={placeholderMovies("top")}
-          onChosenMovie={setSelectedMovie}
-        />
       </section>
 
       <section className="flex flex-col w-full h-fit my-5 mx-3 gap-5">
@@ -133,6 +136,7 @@ export default function DashboardPage({user}: {user: User | undefined}) {
           />
         ))}
       </section>
+      */}
     </main>
   );
 }

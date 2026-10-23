@@ -1,18 +1,17 @@
 "use client"
 
-import { Carousel, CarouselContent, CarouselItem, CarouselPrevious } from "@/components/ui/carousel";
-import { Movie } from "@/types";
+import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
+import { MovieItem } from "@/types";
 import Image from "next/image";
-import { useState } from "react";
 
 export default function ContentRow({
   title,
-  movies,
+  movie,
   onChosenMovie,
 }: {
   title: string;
-  movies: Movie[];
-  onChosenMovie: (chosen: Movie) => void;
+  movie: MovieItem[];
+  onChosenMovie: (chosen: MovieItem) => void;
 }) {
 
   return (
@@ -20,24 +19,29 @@ export default function ContentRow({
       <h2 className="text-2xl font-semibold">{title}</h2>
       <Carousel opts={{ align: "start", dragFree: true }}>
         <CarouselContent>
-          {movies.map((m) => (
+          {movie.map((movie) => (
             <CarouselItem
-              key={m.id}
+              key={movie.id}
               className="basis-1/3 md:basis-1/5 lg:basis-1/6"
             >
               <div
                 className="group relative aspect-2/3 cursor-pointer overflow-hidden rounded-lg"
-                onClick={() => onChosenMovie(m)}
+                onClick={() => onChosenMovie(movie)}
               >
-                <Image
-                  src={m.image}
-                  alt={m.title}
-                  fill
-                  sizes="(min-width: 1024px) 16vw, (min-width: 768px) 20vw, 33vw"
-                  className="object-cover"
-                />
+                {movie.poster_path && (
+                  <Image
+                    src={movie.poster_path!}
+                    alt={movie.title}
+                    fill
+                    sizes="(min-width: 1024px) 16vw, (min-width: 768px) 20vw, 33vw"
+                    className="object-cover"
+                  />
+                )}
+
                 <div className="pointer-events-none absolute inset-0 flex bg-linear-to-b from-transparent to-black transition-opacity duration-200 opacity-100">
-                  <p className="self-end m-3 z-50 truncate text-sm">{m.title}</p>
+                  <p className="self-end m-3 z-50 truncate text-sm">
+                    {movie.title}
+                  </p>
                 </div>
               </div>
             </CarouselItem>

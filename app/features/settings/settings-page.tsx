@@ -6,8 +6,13 @@ import { Eye, Lock, LogOut, Redo, Trash, X } from "lucide-react";
 import Link from "next/link";
 import { PreferenceChips } from "./components/preference-chips";
 import { Genre } from "@/types";
+import { useEffect } from "react";
 
 export default function SettingsPage({user, genres}: {user: User, genres: Genre[]}) {
+
+  useEffect(() => {
+    document.title = "Settings | Film.io"
+  })
 
   const PROFILE_SETTINGS = [
     {

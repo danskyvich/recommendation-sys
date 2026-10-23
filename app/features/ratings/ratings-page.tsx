@@ -1,9 +1,14 @@
 "use client"
 
+import { useEffect } from "react";
 import { placeholderMovies } from "../dashboard/data";
 import MovieCard from "../watchlist/components/movie-card";
 
 export default function RatingsPage() {
+
+  useEffect(() => {
+    document.title = "Ratings | Film.io"
+  })
   return (
     <main className="flex flex-col w-full h-full px-[10dvw]">
       <header className="flex mt-[10dvh] w-full h-fit justify-between items-center">

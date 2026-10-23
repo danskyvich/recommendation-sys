@@ -1,11 +1,9 @@
 // movie-card.tsx
 import { generateStars } from "@/app/utils/generateStars";
 import { Button } from "@/components/ui/button";
-import { Movie } from "@/types";
+import { MovieItem } from "@/types";
 import { Check, Tv, X } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
-import { redirect } from "next/navigation";
 import { useState } from "react";
 import { createPortal } from "react-dom";
 
@@ -14,7 +12,7 @@ export default function MovieModal({
   action = "logged-out",
   onClose,
 }: {
-  movie: Movie;
+  movie: MovieItem;
   action?: "logged-out" | "logged-in";
   onClose: () => void;
 }) {
@@ -32,7 +30,7 @@ export default function MovieModal({
           <div className="relative aspect-2/3 flex w-55">
             <div className="bg-linear-180 from-transparent to-black/55 z-50 w-full h-full" />
             <Image
-              src={movie.image}
+              src={movie.poster_path!}
               alt={movie.title}
               fill
               className="object-cover w-full"
@@ -54,26 +52,22 @@ export default function MovieModal({
             {/* Ratings, duration, year */}
             <div className="flex gap-5 mt-1 items-center">
               <div className="flex items-center">
-                {generateStars(movie.rating)}
+                {generateStars(Math.floor(Number(movie.vote_average)))}
                 <h2 className="ml-2 text-sm md:text-md text-white/75">
-                  {movie.rating}/5
+                  {Math.floor(Number(movie.vote_average))}/10
                 </h2>
               </div>
 
-              <h2 className="text-sm md:text-md text-white/75">{movie.time}</h2>
-              <h2 className="text-sm md:text-md text-white/75">{movie.year}</h2>
+              <h2 className="text-sm md:text-md text-white/75">{movie.release_date}</h2>
             </div>
 
-            <p className="text-md text-white/95 mt-3">{movie.description}</p>
+            <p className="text-md text-white/95 mt-3">{movie.overview}</p>
           </div>
         </div>
         <div className="flex flex-col w-full h-fit">
           <div className="flex flex-col w-full border-y border-slate-600/75 my-2 py-1 tracking-tight">
             <p className="font-semibold text-md lg:text-lg">
-              Producer: <span className="font-light">{movie.producer}</span>
-            </p>
-            <p className="font-semibold text-md lg:text-lg">
-              Stars: <span className="font-light">{movie.stars}</span>
+              Stars: <span className="font-light">{movie.vote_count}</span>
             </p>
           </div>
           <div className="flex w-full h-fit gap-4 items-center">

@@ -1,6 +1,6 @@
 import { StarIcon } from "lucide-react";
 
-export const generateStars = (length: number, total = 5) =>
+export const generateStars = (length: number, total = 10) =>
   Array.from({ length: total }, (_, index) => (
     <StarIcon
       key={index}
