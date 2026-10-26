@@ -1,10 +1,11 @@
 // movie-card.tsx
+import { getGenre } from "@/app/features/dashboard/actions";
 import { generateStars } from "@/app/utils/generateStars";
 import { Button } from "@/components/ui/button";
 import { MovieItem } from "@/types";
-import { Check, Tv, X } from "lucide-react";
+import { Check, ThumbsUp, Tv, X } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
 export default function MovieModal({
@@ -16,9 +17,27 @@ export default function MovieModal({
   action?: "logged-out" | "logged-in";
   onClose: () => void;
 }) {
+  const [genres, setGenres] = useState<{
+    id: number;
+    titles: string[];
+  } | null>(null);
 
   const [addedToWatchlist, setAddedToWatchlist] = useState<boolean>(false);
   const [isRated, setIsRated] = useState<boolean>(false);
+
+  useEffect(() => {
+    let ignore = false;
+
+    getGenre(movie.id).then((titles) => {
+      if (!ignore) setGenres({ id: movie.id, titles });
+    });
+
+    return(() => {
+      ignore = true;
+    })
+  }, [movie.id]);
+
+  const isGenres = genres?.id === movie.id ? genres.titles : [];
 
   return createPortal(
     <div className="fixed inset-0 z-60 flex items-center justify-center bg-black/50">
@@ -50,26 +69,36 @@ export default function MovieModal({
             </div>
 
             {/* Ratings, duration, year */}
-            <div className="flex gap-5 mt-1 items-center">
-              <div className="flex items-center">
-                {generateStars(Math.floor(Number(movie.vote_average)))}
-                <h2 className="ml-2 text-sm md:text-md text-white/75">
-                  {Math.floor(Number(movie.vote_average))}/10
-                </h2>
-              </div>
-
-              <h2 className="text-sm md:text-md text-white/75">{movie.release_date}</h2>
+            <div className="flex gap-3 mt-1 items-center overflow-x-auto overflow-y-hidden">
+              {
+                movie.genre_ids?.length !== 0 && isGenres.map((genre) => (
+                  <p className="border font-semibold px-2 shadow-md py-1 text-sm rounded-sm bg-yellow-400 text-black" key={genre}>{genre}</p>
+                ))
+              }
             </div>
 
             <p className="text-md text-white/95 mt-3">{movie.overview}</p>
           </div>
         </div>
         <div className="flex flex-col w-full h-fit">
-          <div className="flex flex-col w-full border-y border-slate-600/75 my-2 py-1 tracking-tight">
-            <p className="font-semibold text-md lg:text-lg">
-              Stars: <span className="font-light">{movie.vote_count}</span>
+          <div className="flex gap-2 w-full border-y border-slate-600/75 my-2 py-1 tracking-tight">
+            <p className="font-semibold text-sm lg:text-lg">
+              Votes: <span className="font-light">{movie.vote_count}</span>
+            </p>
+            •
+            <p className="text-sm lg:text-lg font-semibold font-sans">
+              Rating:{" "}
+              <span className="font-light">{Math.floor(movie.vote_average)}/10</span>
+            </p>
+            •
+            <p className="text-sm lg:text-lg font-semibold font-sans">
+              Language: <span className="font-light">{movie.language}</span>
+            </p>
+            <p className="text-sm lg:text-lg font-semibold font-sans">
+              Release: <span className="font-light">{movie.release_date}</span>
             </p>
           </div>
+          <div className="w-full">{}</div>
           <div className="flex w-full h-fit gap-4 items-center">
             {action === "logged-in" && (
               <>
@@ -93,19 +122,30 @@ export default function MovieModal({
 
                 {/* Rating button */}
                 <Button
-                  className={`flex w-fit border border-yellow-400 cursor-pointer hover:bg-yellow-400/25`}
+                  className={`${isRated ? "bg-yellow-400" : ""} flex w-fit border border-yellow-400 cursor-pointer hover:bg-yellow-400/25`}
                   type="button"
                   onClick={() => setIsRated((prev) => !prev)}
                 >
                   {isRated ? (
-                    <Check
-                      size={18}
-                      className={`${isRated ? "text-yellow-400" : "text-yellow-400"} min-w-3 h-auto`}
-                    />
+                    <>
+                      <Check
+                        size={18}
+                        className={`${isRated ? "text-black" : "text-yellow-400"} min-w-3 h-auto`}
+                      />
+                      <p
+                        className={`${isRated ? "text-black" : "text-yellow-400"}`}
+                      >
+                        Rated
+                      </p>
+                    </>
                   ) : (
-                    <p className="text-sm text-yellow-400">Rate:</p>
+                    <>
+                      <ThumbsUp
+                        className={`${isRated ? "text-black" : "text-yellow-400"}`}
+                      />
+                      <p className="text-sm text-yellow-400">Rate this movie</p>
+                    </>
                   )}
-                  <div className={`w-full h-full flex items-center`}>{generateStars(3)}</div>
                 </Button>
               </>
             )}

@@ -6,11 +6,11 @@ import Image from "next/image";
 
 export default function ContentRow({
   title,
-  movie,
+  movies,
   onChosenMovie,
 }: {
   title: string;
-  movie: MovieItem[];
+  movies: MovieItem[];
   onChosenMovie: (chosen: MovieItem) => void;
 }) {
 
@@ -19,7 +19,7 @@ export default function ContentRow({
       <h2 className="text-2xl font-semibold">{title}</h2>
       <Carousel opts={{ align: "start", dragFree: true }}>
         <CarouselContent>
-          {movie.map((movie) => (
+          {movies.map((movie) => (
             <CarouselItem
               key={movie.id}
               className="basis-1/3 md:basis-1/5 lg:basis-1/6"

@@ -6,21 +6,23 @@ import {
   CarouselItem,
 } from "@/components/ui/carousel";
 import Image from "next/image";
-import { faker } from "@faker-js/faker";
-import { useEffect, useState } from "react";
-import { generateStars } from "@/app/utils/generateStars";
+import { Suspense, useEffect, useState } from "react";
 import { User } from "@auth0/nextjs-auth0/types";
 import ContentRow from "./components/content-rows";
 import MovieCard from "@/app/components/layout/movie-modal";
-import { MovieItem } from "@/types";
+import { AggregatedGenres, MovieItem } from "@/types";
+import Thumbnail from "./components/thumbnail";
+import ThumbnailSkeleton from "./components/skeleton/thumbnail-skeleton";
+import { FEATURED } from "@/app/lib/db";
 
 interface DashboardProps {
   user: User | undefined,
   trending: MovieItem[],
   topRated: MovieItem[],
+  perGenre: Record<string, AggregatedGenres[]>,
 }
 
-export default function DashboardPage({user, trending, topRated}: DashboardProps) {
+export default function DashboardPage({user, trending, topRated, perGenre}: DashboardProps) {
 
   useEffect(() => {
     document.title = "Film.io - Home";
@@ -44,39 +46,10 @@ export default function DashboardPage({user, trending, topRated}: DashboardProps
 
       {/* Trending Now! */}
       <section className="flex flex-col w-full h-fit">
-        {/* Thumbnail */}
-        <div className="relative flex w-full h-80 md:h-120 rounded-md">
-          <div className="flex w-full h-full z-50 bg-linear-180 from-black/30 to-black">
-            <article className="self-end px-5 py-3">
-
-              {/* Title */}
-              <p className="text-4xl font-semibold capitalize">
-                {selectedItem?.title}
-              </p>
-
-              {/* Ratings */}
-              <div className="flex items-center gap-2 w-fit h-full py-2">
-                <p>{Math.floor(selectedItem?.vote_average ?? 0)}/10</p>
-                <div className="flex">
-                  {generateStars(Math.floor(selectedItem?.vote_average ?? 0))}
-                </div>
-              </div>
-
-              {/* Description */}
-              <p className="text-md font-sans font-light w-full md:w-[75%]">
-                {selectedItem?.overview}
-              </p>
-            </article>
-          </div>
-          {selectedItem.poster_path && (
-            <Image
-              src={selectedItem?.poster_path}
-              alt={String(selectedItem?.id)}
-              fill
-              className="object-cover"
-            />
-          )}
-        </div>
+        <Suspense fallback={<ThumbnailSkeleton />}>
+          {/* Thumbnail */}
+          <Thumbnail selectedItem={selectedItem} />
+        </Suspense>
 
         {/* Carousel */}
         <Carousel
@@ -110,33 +83,21 @@ export default function DashboardPage({user, trending, topRated}: DashboardProps
       <section className="flex flex-col w-full h-fit my-5 mx-3">
         <ContentRow
           title="Top rated"
-          movie={topRated}
+          movies={topRated}
           onChosenMovie={setSelectedMovie}
         />
       </section>
 
-      {/*}
-      <section className="flex flex-col w-full h-fit my-5 mx-3">
-        {user && (
+      {
+        FEATURED.filter((genre) => genre).slice(0, 5).map((genre, id) => (
           <ContentRow
-            title="Recommended for you"
-            movies={placeholderMovies("recommended")}
-            onChosenMovie={setSelectedMovie}
-          />
-        )}
-      </section>
-
-      <section className="flex flex-col w-full h-fit my-5 mx-3 gap-5">
-        {GENRES.map((g, id) => (
-          <ContentRow
+            title={genre}
+            movies={perGenre[genre]}
             key={id}
-            title={g}
-            movies={placeholderMovies(g)}
             onChosenMovie={setSelectedMovie}
           />
-        ))}
-      </section>
-      */}
+        ))
+      }
     </main>
   );
 }

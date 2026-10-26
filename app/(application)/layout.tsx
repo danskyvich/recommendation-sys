@@ -4,9 +4,9 @@ import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import Header from "../components/layout/header";
 import { auth0 } from "../lib/auth/auth0";
+import { cacheLife, cacheTag } from "next/cache";
 
 export default async function AppLayout({children}: {children: React.ReactNode}) {
-
     const session = await auth0.getSession();
 
     return (

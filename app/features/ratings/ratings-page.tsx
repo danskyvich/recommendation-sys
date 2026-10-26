@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect } from "react";
-import { placeholderMovies } from "../dashboard/data";
 import MovieCard from "../watchlist/components/movie-card";
 
 export default function RatingsPage() {
@@ -23,19 +22,7 @@ export default function RatingsPage() {
       <hr className="border-white/35 mt-1" />
 
       <section className="grid grid-cols-3 lg:grid-cols-4 gap-x-5 gap-y-5 w-full h-fit mt-4 justify-evenly">
-        {placeholderMovies("top", 6).map((item) => (
-          <MovieCard
-            movie={{
-              id: item.id,
-              image: item.image,
-              title: item.title,
-              year: item.year,
-              genre: item.genre,
-            }}
-            key={item.id}
-            action="ratings"
-          />
-        ))}
+       
       </section>
     </main>
   );

@@ -48,8 +48,8 @@ async function insertMovies(data: MovieItem[]) {
         } else {
             formattedReleaseDate = movie.release_date;
         }
-        await sql `INSERT INTO movies (id, title, overview, release_date, poster_path, popularity, language, vote_average, vote_count) VALUES (${movie.id}, ${movie.title}, ${movie.overview}, ${formattedReleaseDate}, ${movie.poster_path}, ${movie.popularity}, ${movie.original_language}, ${movie.vote_average}, ${movie.vote_count}) ON CONFLICT DO NOTHING`;
-        for (const genre of movie.genre_ids) {
+        await sql `INSERT INTO movies (id, title, overview, release_date, poster_path, popularity, language, vote_average, vote_count) VALUES (${movie.id}, ${movie.title}, ${movie.overview}, ${formattedReleaseDate}, ${movie.poster_path}, ${movie.popularity}, ${movie.language}, ${movie.vote_average}, ${movie.vote_count}) ON CONFLICT DO NOTHING`;
+        for (const genre of movie?.genre_ids ?? []) {
             await sql `INSERT INTO movie_genre_join (movie_id, genre_id) VALUES (${movie.id}, ${genre}) ON CONFLICT DO NOTHING`
         }
     }

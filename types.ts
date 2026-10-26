@@ -1,6 +1,6 @@
 export type Genre = {
     id: number,
-    name: string
+    title: string
 }
 
 export type Movie = { id: number; title: string; image: string, rating: number, producer: string, time: string, year: string, stars: string[], genre: string, description: string };
@@ -9,13 +9,20 @@ export type MovieMinimum = { id: number, image: string, title: string, year: str
 export type MovieItem = 
 {
     poster_path: string | null,
-    genre_ids: Array<number>,
     id: number,
-    original_language: string,
+    language: string,
     title: string,
     overview: string,
     release_date: string,
     popularity: number,
     vote_count: number,
     vote_average: number,
+    genre_ids?: Array<number> | null,
 }
+
+export type AggregatedGenres = Omit<MovieItem, 'genre_ids'> & {
+    rn: string,
+    genres_id: number,
+    genres_title: string,
+}
+
