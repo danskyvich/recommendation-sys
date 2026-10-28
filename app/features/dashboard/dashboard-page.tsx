@@ -73,11 +73,11 @@ export default function DashboardPage({user, trending, topRated, perGenre}: Dash
         </Carousel>
       </section>
 
-      <section className="flex flex-col w-full h-fit my-5 mx-3">
+      <section className="flex flex-col w-full h-fit mx-3">
         <ContentRow title="Top rated" movies={topRated} />
       </section>
 
-      <section className="flex flex-col w-full h-fit my-5 mx-3">
+      <section className="flex flex-col w-full h-fit mx-3 gap-4">
         {FEATURED.filter((genre) => genre)
           .slice(0, 5)
           .map((genre, id) => (
@@ -88,7 +88,6 @@ export default function DashboardPage({user, trending, topRated, perGenre}: Dash
                 opts={{
                   align: "start",
                 }}
-                className="mx1"
               >
                 <CarouselContent>
                   {perGenre[genre].map((movies) => (

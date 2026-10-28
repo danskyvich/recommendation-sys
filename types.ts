@@ -17,7 +17,7 @@ export type MovieItem =
     popularity: number,
     vote_count: number,
     vote_average: number,
-    genre_ids?: Array<number> | null,
+    genres: string[],
 }
 
 export type AggregatedGenres = Omit<MovieItem, 'genre_ids'> & {

@@ -2,6 +2,7 @@ import MovieModal from "@/app/components/layout/movie-modal";
 import { getMovie } from "@/app/features/dashboard/queries";
 import { getUser } from "@/app/lib/auth/get-user";
 import { sql } from "@/app/lib/db";
+import { revalidatePath } from "next/cache";
 import { notFound } from "next/navigation";
 
 export default async function ModalFetch({params}: {params: Promise<{id: string}>}) {

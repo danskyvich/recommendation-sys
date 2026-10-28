@@ -19,13 +19,26 @@ const addPosterUrlForASingleMovie = (movie: MovieItem): MovieItem => {
 const addPosterUrlToBatch = (movies: MovieItem[]): MovieItem[] => 
     movies.map((movie) => addPosterUrlForASingleMovie(movie))
 
-    
 export const fetchTopRatedMovies = async () => {
     'use cache'
     cacheLife('hours');
     cacheTag('topRated');
-    const response = await sql `SELECT * FROM movies WHERE vote_count >= 15000 ORDER BY vote_average DESC LIMIT 20`;
-    if (!response) throw new Error("Empty records");
+    const response = await sql `
+        SELECT 
+            movies.*,
+            COALESCE(
+            JSON_AGG(genres.title) FILTER (WHERE genres.id IS NOT NULL),
+            '[]'
+            ) AS genres
+        FROM movies
+        LEFT JOIN movie_genre_join ON movie_genre_join.movie_id = movies.id
+        LEFT JOIN genres ON genres.id = movie_genre_join.genre_id
+        WHERE movies.vote_count >= 15000 
+        GROUP BY movies.id
+        ORDER BY movies.vote_average DESC 
+        LIMIT 20
+    `;
+    if (response.length === 0) throw new Error("Empty records");
     return addPosterUrlToBatch(response as MovieItem[]);
 }
 

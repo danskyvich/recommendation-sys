@@ -2,6 +2,7 @@
 
 import { auth0 } from '@/app/lib/auth/auth0'
 import { sql } from '@/app/lib/db'
+import { revalidatePath } from 'next/cache';
 
 const retrieveUserId = async (): Promise<string | null> => {
     const session = await auth0.getSession();
@@ -9,6 +10,8 @@ const retrieveUserId = async (): Promise<string | null> => {
 }
 
 export const addMovieToWatchlist = async (movie_id: string) => {
+    // remove stored cache and fetch new data next time
+    revalidatePath(`/dashboard/${movie_id}`);
     const user_id = await retrieveUserId();
     if (!user_id) {
         return { error: "You must be logged in to add movies", success: false };
@@ -28,6 +31,8 @@ export const addMovieToWatchlist = async (movie_id: string) => {
 }
 
 export const deleteMovieFromWatchlist = async (movie_id: string) => {
+    // remove stored cache and fetch new data next time
+    revalidatePath(`/dashboard/${movie_id}`);
     const user_id = await retrieveUserId();
     if (!user_id) {
         return { error: "User not authenticate", success: false }
