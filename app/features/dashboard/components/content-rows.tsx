@@ -3,15 +3,14 @@
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 import { MovieItem } from "@/types";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function ContentRow({
   title,
   movies,
-  onChosenMovie,
 }: {
   title: string;
   movies: MovieItem[];
-  onChosenMovie: (chosen: MovieItem) => void;
 }) {
 
   return (
@@ -24,9 +23,9 @@ export default function ContentRow({
               key={movie.id}
               className="basis-1/3 md:basis-1/5 lg:basis-1/6"
             >
-              <div
+              <Link
                 className="group relative aspect-2/3 cursor-pointer overflow-hidden rounded-lg"
-                onClick={() => onChosenMovie(movie)}
+                href={`/dashboard/${movie.id}`} scroll={false}
               >
                 {movie.poster_path && (
                   <Image
@@ -43,7 +42,7 @@ export default function ContentRow({
                     {movie.title}
                   </p>
                 </div>
-              </div>
+              </Link>
             </CarouselItem>
           ))}
         </CarouselContent>

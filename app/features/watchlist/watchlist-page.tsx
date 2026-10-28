@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect } from "react";
-import MovieCard from "./components/movie-card";
 
 export default function WatchListPage() {
 

@@ -26,3 +26,23 @@ export type AggregatedGenres = Omit<MovieItem, 'genre_ids'> & {
     genres_title: string,
 }
 
+export const FEATURED = [
+    "Action",
+    "Adventure",
+    "Animation",
+    "Comedy",
+    "Crime",
+    "Documentary",
+    "Drama",
+    "Family",
+    "Fantasy",
+    "History",
+    "Horror",
+    "Music",
+    "Mystery",
+    "Romance",
+    "Science Fiction",
+    "Thriller",
+    "War",
+  ];
+

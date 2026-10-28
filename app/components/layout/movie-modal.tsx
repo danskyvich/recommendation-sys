@@ -1,45 +1,52 @@
+"use client"
+
 // movie-card.tsx
-import { getGenre } from "@/app/features/dashboard/actions";
-import { generateStars } from "@/app/utils/generateStars";
+import { addMovieToWatchlist, deleteMovieFromWatchlist } from "@/app/features/watchlist/actions";
+import WatchlistButton from "@/app/features/watchlist/components/watchlist-button";
 import { Button } from "@/components/ui/button";
 import { MovieItem } from "@/types";
-import { Check, ThumbsUp, Tv, X } from "lucide-react";
+import { Check, ThumbsUp, X } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useState } from "react";
-import { createPortal } from "react-dom";
+import { useRouter } from "next/navigation";
+import { useEffect, useOptimistic, useState, useTransition } from "react";
 
 export default function MovieModal({
-  movie,
   action = "logged-out",
-  onClose,
+  inWatchlist,
+  movie,
 }: {
-  movie: MovieItem;
+  inWatchlist?: boolean,
   action?: "logged-out" | "logged-in";
-  onClose: () => void;
+  movie: MovieItem
 }) {
-  const [genres, setGenres] = useState<{
-    id: number;
-    titles: string[];
-  } | null>(null);
 
-  const [addedToWatchlist, setAddedToWatchlist] = useState<boolean>(false);
+  const router = useRouter();
+
+  const [optimisticWatchlist, setOptimisticWatchlist] = useOptimistic(inWatchlist, (_current, next: boolean) => next);
   const [isRated, setIsRated] = useState<boolean>(false);
+  const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
-    let ignore = false;
-
-    getGenre(movie.id).then((titles) => {
-      if (!ignore) setGenres({ id: movie.id, titles });
-    });
-
-    return(() => {
-      ignore = true;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") router.back();
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [router]);
+  
+  const handleWatchlistToggle = () => {
+    startTransition( async () => {
+      const next = !optimisticWatchlist // start as false
+      setOptimisticWatchlist(next)
+      const result = next ? await addMovieToWatchlist(String(movie.id)) : await deleteMovieFromWatchlist(String(movie.id)); 
+      if (!result.success) { 
+        console.error(result.error);
+        // TODO: add a component here that displays error messages
+      };
     })
-  }, [movie.id]);
+  }
 
-  const isGenres = genres?.id === movie.id ? genres.titles : [];
-
-  return createPortal(
+  return (
     <div className="fixed inset-0 z-60 flex items-center justify-center bg-black/50">
       <div
         className="flex w-120 md:w-150 flex-col gap-3 rounded-lg border border-white/35 bg-black p-4"
@@ -57,24 +64,29 @@ export default function MovieModal({
           </div>
 
           <div className="flex flex-col w-full h-full">
-            <div className="flex w-full justify-between">
+            <div className="flex w-full justify-between items-center">
               <h1 className="text-2xl font-sans font-semibold text-white">
                 {movie.title}
               </h1>
               <X
                 size={18}
                 className="min-w-3 h-auto cursor-pointer"
-                onClick={onClose}
+                aria-label="Close"
+                onClick={() => router.back()}
               />
             </div>
 
             {/* Ratings, duration, year */}
             <div className="flex gap-3 mt-1 items-center overflow-x-auto overflow-y-hidden">
-              {
-                movie.genre_ids?.length !== 0 && isGenres.map((genre) => (
-                  <p className="border font-semibold px-2 shadow-md py-1 text-sm rounded-sm bg-yellow-400 text-black" key={genre}>{genre}</p>
-                ))
-              }
+              {movie.genre_ids?.length !== 0 &&
+                movie.genre_ids?.map((genre) => (
+                  <p
+                    className="border font-semibold px-2 shadow-md py-1 text-sm rounded-sm bg-yellow-400 text-black"
+                    key={genre}
+                  >
+                    {genre}
+                  </p>
+                ))}
             </div>
 
             <p className="text-md text-white/95 mt-3">{movie.overview}</p>
@@ -88,7 +100,9 @@ export default function MovieModal({
             •
             <p className="text-sm lg:text-lg font-semibold font-sans">
               Rating:{" "}
-              <span className="font-light">{Math.floor(movie.vote_average)}/10</span>
+              <span className="font-light">
+                {Math.floor(movie.vote_average)}/10
+              </span>
             </p>
             •
             <p className="text-sm lg:text-lg font-semibold font-sans">
@@ -103,22 +117,11 @@ export default function MovieModal({
             {action === "logged-in" && (
               <>
                 {/* Add to watchlist */}
-                <Button
-                  className={`${addedToWatchlist && "bg-yellow-400"} border border-yellow-400 items-center justify-center hover:bg-yellow-400/25 cursor-pointer`}
-                  type="submit"
-                  onClick={() => setAddedToWatchlist((prev) => !prev)}
-                >
-                  {addedToWatchlist ? (
-                    <Check size={18} className="min-w-3 h-auto text-black" />
-                  ) : (
-                    <Tv size={18} className="min-w-3 h-auto text-yellow-400" />
-                  )}
-                  <p
-                    className={`${addedToWatchlist ? "text-black" : "text-yellow-400"}`}
-                  >
-                    Add to watchlist
-                  </p>
-                </Button>
+                <WatchlistButton
+                  state={optimisticWatchlist as boolean}
+                  onClick={handleWatchlistToggle}
+                  movie_id={movie.id}
+                />
 
                 {/* Rating button */}
                 <Button
@@ -152,7 +155,6 @@ export default function MovieModal({
           </div>
         </div>
       </div>
-    </div>,
-    document.body,
+    </div>
   );
 }

@@ -1,3 +1,5 @@
+"use client"
+
 import ProfileCard from "@/app/features/settings/components/profile-card";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
