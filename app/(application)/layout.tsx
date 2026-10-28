@@ -7,6 +7,7 @@ import { auth0 } from "../lib/auth/auth0";
 import { cacheLife, cacheTag } from "next/cache";
 import SessionShell from "./session-shell";
 
+//layout children
 export default function AppLayout({children}: {children: React.ReactNode}) {
     return (
       <main className="flex w-full h-dvh overflow-hidden bg-black/45">

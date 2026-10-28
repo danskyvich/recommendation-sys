@@ -1,8 +1,8 @@
 "use client"
 
 import { Button } from "@/components/ui/button";
-import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
-import { FilmIcon, Lock, Mail } from "lucide-react";
+import { Field, FieldGroup } from "@/components/ui/field";
+import { FilmIcon, Mail } from "lucide-react";
 import { GoogleIcon } from "../../lib/icons";
 import { useEffect } from "react";
 import { handleSubmit } from "@/app/(auth)/login/actions";
@@ -10,7 +10,7 @@ import { handleSubmit } from "@/app/(auth)/login/actions";
 export default function LoginPage() {
 
   useEffect(() => {
-    document.title === "Sign in to Film.io";
+    document.title = "Sign in to Film.io";
   }, []);
 
   return (

@@ -4,11 +4,14 @@ import ProfileCard from "@/app/features/settings/components/profile-card";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { User } from "@auth0/nextjs-auth0/types";
-import { Eye, Lock, LogOut, Redo, Trash, X } from "lucide-react";
+import { Eye, LogOut, Redo, Trash, X } from "lucide-react";
 import Link from "next/link";
 import { PreferenceChips } from "./components/preference-chips";
 import { Genre } from "@/types";
-import { useEffect } from "react";
+import { startTransition, useEffect, useState } from "react";
+import { deleteAccount } from "./actions";
+import { DialogTrigger } from "@/components/ui/dialog";
+import DialogComponent from "@/app/components/layout/dialog";
 
 export default function SettingsPage({user, genres}: {user: User, genres: Genre[]}) {
 
@@ -46,11 +49,18 @@ export default function SettingsPage({user, genres}: {user: User, genres: Genre[
       description: "This action is irreversible",
       value: "Delete account",
       icon: <Trash size={18} className="min-w-3 h-auto" />,
+      aria_label: "delete-account-button",
       className:
         "border-red-400 text-red-400 hover:bg-red-400/25 active:bg-red-400 active:border-red-800 active:text-red-800",
-      link: "/",
+      title: "Are you sure?",
+      content: "This action cannot be undone. This will permanently delete your account and remove your data from our servers.",
+      onConfirm: deleteAccount,
+      yesButtonText: "Delete my account",
+      noButtonText: "Back",
+      pendingText: "Deleting..."
     },
   ];
+
   return (
     <main className="flex flex-col w-full h-full overflow-y-auto overflow-x-hidden px-[5dvw] sm:px-[10dvw] xl:px-[20dvw] pt-10 pb-[5%] gap-3">
       {/* General settings */}
@@ -63,7 +73,7 @@ export default function SettingsPage({user, genres}: {user: User, genres: Genre[
         {/* Profile card */}
         <Card size={"default"} className="w-full bg-slate-900 my-4 rounded-xl">
           <CardContent className="flex w-full justify-between">
-            <ProfileCard user={user}/>
+            <ProfileCard user={user} />
             <Button
               type="button"
               className="border border-red-400 rounded-lg hover:bg-red-400/25 cursor-pointer active:bg-red-400/50"
@@ -114,9 +124,13 @@ export default function SettingsPage({user, genres}: {user: User, genres: Genre[
 
               <Button
                 type="button"
+                aria-label={`${item.value} button`}
                 className="border border-white cursor-pointer hover:bg-white/25 active:border-white active:bg-white active:text-black"
               >
-                <Link href={item.link} className="flex w-fit gap-2 items-center">
+                <Link
+                  href={item.link}
+                  className="flex w-fit gap-2 items-center"
+                >
                   {item.icon}
                   <p>{item.value}</p>
                 </Link>
@@ -143,15 +157,24 @@ export default function SettingsPage({user, genres}: {user: User, genres: Genre[
                 </p>
               </div>
 
-              <Button
-                type="button"
-                className={`border cursor-pointer ${item.className}`}
-              >
-                <Link href={item.link} className="flex w-fit gap-2 items-center">
+              <DialogTrigger>
+                <Button
+                  type="button"
+                  aria-label={item.aria_label}
+                  className={`border cursor-pointer ${item.className}`}
+                >
                   {item.icon}
                   <p>{item.value}</p>
-                </Link>
-              </Button>
+                </Button>
+                <DialogComponent
+                  content={item.content}
+                  title={item.title}
+                  onConfirm={item.onConfirm}
+                  yesButtonText={item.yesButtonText}
+                  noButtonText={item.noButtonText}
+                  pendingText={item.pendingText}
+                />
+              </DialogTrigger>
             </div>
           ))}
         </article>

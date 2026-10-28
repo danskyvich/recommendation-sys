@@ -18,9 +18,10 @@ export default async function ModalFetch({params}: {params: Promise<{id: string}
         if (!isAnInteger || cleanedId < 1) notFound();
     
         // fetch the movie and user info
-        const [movie, sub] = await Promise.all([getMovie(cleanedId), getUser()]);
+        const [movie, auth] = await Promise.all([getMovie(cleanedId), getUser()]);
         if (!movie) notFound();
-        const user_id = sub?.user?.id;
+
+        const user_id = auth.user?.sub;
     
         // check if the movie is in the watchlist
         let inWatchlist = false;

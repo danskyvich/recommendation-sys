@@ -4,6 +4,7 @@ import AppSidebar from "../components/layout/app-sidebar";
 import { auth0 } from "../lib/auth/auth0";
 import { connection } from "next/server";
 
+// layout of the web application
 export default async function SessionShell({children}: {children: React.ReactNode}) {
     await connection();
     const session = await auth0.getSession();

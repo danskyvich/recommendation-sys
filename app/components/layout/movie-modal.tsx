@@ -14,7 +14,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useOptimistic, useState, useTransition } from "react";
 
 export default function MovieModal({
-  action = "logged-out",
+  action,
   inWatchlist = false,
   movie,
 }: {
