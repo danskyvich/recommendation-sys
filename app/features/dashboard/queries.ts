@@ -8,7 +8,7 @@ import "server-only";
 
 const IMG_BASE = 'https://image.tmdb.org/t/p/w500';
 
-const addPosterUrlForASingleMovie = (movie: MovieItem): MovieItem => {
+export const addPosterUrlForASingleMovie = (movie: MovieItem): MovieItem => {
     return {
         ...movie,
         release_date: movie.release_date ? new Date(movie.release_date).toISOString().slice(0, 10) : "",
@@ -16,7 +16,7 @@ const addPosterUrlForASingleMovie = (movie: MovieItem): MovieItem => {
     }
 }
 
-const addPosterUrlToBatch = (movies: MovieItem[]): MovieItem[] => 
+export const addPosterUrlToBatch = (movies: MovieItem[]): MovieItem[] => 
     movies.map((movie) => addPosterUrlForASingleMovie(movie))
 
 export const fetchTopRatedMovies = async () => {

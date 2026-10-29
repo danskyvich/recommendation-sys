@@ -2,7 +2,9 @@
 
 import { auth0 } from '@/app/lib/auth/auth0'
 import { sql } from '@/app/lib/db'
-import { revalidatePath } from 'next/cache';
+import { MovieItem } from '@/types';
+import { cacheLife, cacheTag, revalidatePath } from 'next/cache';
+import { addPosterUrlToBatch } from '../dashboard/queries';
 
 const retrieveUserId = async (): Promise<string | null> => {
     const session = await auth0.getSession();
@@ -47,5 +49,40 @@ export const deleteMovieFromWatchlist = async (movie_id: string) => {
     } catch (err) {
         console.error("Movie removal failed: ", err);
         return { error: "Failed removing your movie from the watchlist", success: false}
+    }
+}
+
+export const getTotalNumberOfWatchlistMovies = async (user_id: string) => {
+    const [{count}] = await sql `
+        SELECT COUNT(*) FROM watchlist
+        WHERE user_id = ${user_id}
+    `;
+
+    return count;
+}
+
+export const fetchAllWatchlistMovies = async (user_id: string, page: number): Promise<{success: false, response: [], error: string} | {success: true, response: MovieItem[], error: null}> => {
+    try {
+        const response = (await sql `
+            SELECT 
+                movies.*,
+                COALESCE(
+                    JSON_AGG(genres.title) FILTER (WHERE genres.id IS NOT NULL),
+                    '[]'
+                ) as genres
+            FROM watchlist
+            JOIN movies ON movies.id = watchlist.movie_id
+            LEFT JOIN movie_genre_join ON movie_genre_join.movie_id = movies.id
+            LEFT JOIN genres ON genres.id = movie_genre_join.genre_id
+            WHERE watchlist.user_id = ${user_id}
+            GROUP BY movies.id, watchlist.created_at
+            ORDER BY watchlist.created_at DESC
+            LIMIT 6 OFFSET ${(page - 1) * 6}
+        `) as MovieItem[];
+
+        return { success: true, response: addPosterUrlToBatch(response), error: null };
+    } catch (err) {
+        console.error("fetchAllWatchlistMovies failed: ", err);
+        return { success: false, error: "Failed fetching watchlist movies.", response: []}
     }
 }

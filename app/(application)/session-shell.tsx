@@ -1,6 +1,6 @@
 import { SidebarProvider } from "@/components/ui/sidebar";
 import Header from "../components/layout/header";
-import AppSidebar from "../components/layout/app-sidebar";
+import AppSidebar from "../components/layout/sidebar/sidebar-main";
 import { auth0 } from "../lib/auth/auth0";
 import { connection } from "next/server";
 

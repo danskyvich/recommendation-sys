@@ -54,7 +54,7 @@ export default function DialogComponent({ title, content, onConfirm, yesButtonTe
               <Button
                 aria-label="confirm-action"
                 type="submit"
-                className="border border-red text-red-500 hover:bg-red-500/25 active:bg-red-500 active:text-white active:border-red-500 cursor-pointer px-5"
+                className="border border-red text-red-500 hover:bg-red-500/25 active:bg-red-500 gap-3 items-center active:text-white active:border-red-500 cursor-pointer px-5"
                 isDisabled={isPending}
               >
                 {

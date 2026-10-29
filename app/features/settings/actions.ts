@@ -3,6 +3,7 @@
 import { getUser } from "@/app/lib/auth/get-user";
 import { sql } from "@/app/lib/db";
 import { ManagementClient } from "auth0";
+import { cacheLife, cacheTag } from "next/cache";
 import { redirect } from "next/navigation";
 
 const management = new ManagementClient({

@@ -1,4 +1,4 @@
-import AppSidebar from "@/app/components/layout/app-sidebar"
+import AppSidebar from "@/app/components/layout/sidebar/sidebar-main"
 import { SidebarProvider } from "@/components/ui/sidebar"
 import { redirect } from "next/navigation";
 import { Suspense } from "react";

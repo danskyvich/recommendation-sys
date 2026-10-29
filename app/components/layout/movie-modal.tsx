@@ -22,8 +22,9 @@ export default function MovieModal({
   action: "logged-out" | "logged-in";
   movie: MovieItem;
 }) {
-  const router = useRouter();
 
+  // states
+  const router = useRouter();
   const [optimisticWatchlist, setOptimisticWatchlist] = useOptimistic(
     inWatchlist,
     (_current, next: boolean) => next,
@@ -31,6 +32,7 @@ export default function MovieModal({
   const [isRated, setIsRated] = useState<boolean>(false);
   const [isPending, startTransition] = useTransition();
 
+  // closes modal using either x or ESC keys
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") router.back();
@@ -39,6 +41,7 @@ export default function MovieModal({
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [router]);
 
+  // handle watchlist
   const handleWatchlistToggle = () => {
     startTransition(async () => {
       const next = !optimisticWatchlist;
@@ -138,34 +141,18 @@ export default function MovieModal({
                 <WatchlistButton
                   state={optimisticWatchlist}
                   onClick={handleWatchlistToggle}
-                  movie_id={movie.id}
                   disabled={isPending}
                 />
 
                 {/* Rating button */}
                 <Button
-                  className={`${isRated ? "bg-yellow-400" : ""} flex w-fit border border-yellow-400 cursor-pointer hover:bg-yellow-400/25`}
                   type="button"
+                  aria-pressed={isRated}
                   onClick={() => setIsRated((prev) => !prev)}
+                  className={`${isRated ? "bg-yellow-400" : "bg-transparent"} border border-yellow-400 cursor-pointer hover:bg-yellow-400/25 hover:text-white active:bg-yellow-400 active:text-black`}
                 >
-                  {isRated ? (
-                    <>
-                      <Check
-                        size={18}
-                        className={`"text-black" : "text-yellow-400" min-w-3 h-auto`}
-                      />
-                      <p className={`"text-black" : "text-yellow-400"`}>
-                        Rated
-                      </p>
-                    </>
-                  ) : (
-                    <>
-                      <ThumbsUp
-                        className={`"text-black" : "text-yellow-400"`}
-                      />
-                      <p className="text-sm text-yellow-400">Rate this movie</p>
-                    </>
-                  )}
+                  {isRated ? <Check size={18} className="text-black"/> : <ThumbsUp size={18} className="text-yellow-400"/>}
+                  <span className={isRated ? "text-black" : "text-yellow-400"}>{isRated ? "Rated" : "Rate this movie"}</span>
                 </Button>
               </>
             )}

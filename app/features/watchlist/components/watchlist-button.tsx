@@ -1,19 +1,18 @@
 import { Button } from "@/components/ui/button";
-import { Check, Tv } from "lucide-react";
+import { Check, Loader2, Tv } from "lucide-react";
 
 interface WatchlistButton {
-    movie_id: number,
     state: boolean,
     onClick: () => void,
     disabled: boolean,
 }
 
-export default function WatchlistButton ({ movie_id, state, onClick, disabled}: WatchlistButton) {
+export default function WatchlistButton ({ state, onClick, disabled}: WatchlistButton) {
     return (
       <Button
-        className={`${state && "bg-yellow-400"} border border-yellow-400 items-center justify-center hover:bg-yellow-400/25 cursor-pointer`}
-        type="submit"
-        onClick={() => onClick}
+        className={`${state ? "bg-yellow-400" : "bg-transparent"} border border-yellow-400 items-center justify-center hover:bg-yellow-400/25 cursor-pointer`}
+        type="button"
+        onClick={onClick}
         isDisabled={disabled}
       >
         {state ? (
@@ -21,8 +20,14 @@ export default function WatchlistButton ({ movie_id, state, onClick, disabled}: 
         ) : (
           <Tv size={18} className="min-w-3 h-auto text-yellow-400" />
         )}
+        {disabled && (
+          <Loader2
+            size={16}
+            className={`${state ? "text-black" : "text-yellow-400"} min-w-4 h-auto animate-spin`}
+          />
+        )}
         <p className={`${state ? "text-black" : "text-yellow-400"}`}>
-          Add to watchlist
+          { disabled ? "Saving..." : state ? "In watchlist" : "Add to watchlist" }
         </p>
       </Button>
     );
