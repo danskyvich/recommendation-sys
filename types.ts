@@ -3,27 +3,59 @@ export type Genre = {
     title: string
 }
 
-export type Movie = { id: number; title: string; image: string, rating: number, producer: string, time: string, year: string, stars: string[], genre: string, description: string };
-export type MovieMinimum = { id: number, image: string, title: string, year: string, genre: string };
-
-export type MovieItem = 
-{
-    poster_path: string | null,
+type ProductionCompanies = {
     id: number,
-    language: string,
-    title: string,
-    overview: string,
-    release_date: string,
-    popularity: number,
-    vote_count: number,
-    vote_average: number,
-    genres: string[],
+    logo_path: string | null,
+    name: string,
+    origin_country: string
 }
 
-export type AggregatedGenres = Omit<MovieItem, 'genre_ids'> & {
+export type TMDBImageSizes = "w185" | "w500" | "original";
+
+// MOVIE TYPES
+// carousels
+export type MovieItem = {
+    id: number,
+    title: string,
+    poster_path: string | null,
+    release_date: string | null,
+    vote_average: number,
+    vote_count: number,
+    popularity: number,
+    overview: string,
+    original_language: string,
+    genres: string[],
+    production_companies: ProductionCompanies[],
+}
+
+// movie_modal
+export type MovieSummary = MovieItem & {
+    runtime: number | null,
+    tagline: string | null,
+}
+
+// movie_page
+export type MovieFull = MovieSummary & {
+    adult: boolean,
+    origin_country: string[],
+    homepage: string | null,
+    budget: number,
+    revenue: number,
+    production_companies: ProductionCompanies[],
+    production_countries: string[],
+    
+}
+
+export type AggregatedGenres = Omit<MovieItem, 'genres'> & {
     rn: string,
     genres_id: number,
     genres_title: string,
+}
+
+//! the structure of the movie the TMDB sends 
+export type TMDBSeedScript = Omit<MovieFull, 'genres' | 'production_countries'> & {
+    genres: { id: number, name: string }[],
+    production_countries: { iso_3166_1: string, name: string}[],
 }
 
 export const FEATURED = [

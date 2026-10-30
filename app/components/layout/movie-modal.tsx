@@ -1,5 +1,6 @@
 "use client";
 
+import RatingsButton from "@/app/features/ratings/components/ratings-button";
 // movie-card.tsx
 import {
   addMovieToWatchlist,
@@ -10,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { MovieItem } from "@/types";
 import { Check, ThumbsUp, X } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useOptimistic, useState, useTransition } from "react";
 
@@ -98,7 +100,6 @@ export default function MovieModal({
               </button>
             </div>
 
-            {/* Ratings, duration, year */}
             <div className="flex gap-3 mt-1 items-center overflow-x-auto overflow-y-hidden">
               {movie.genres?.length !== 0 &&
                 movie.genres?.map((genre) => (
@@ -114,28 +115,34 @@ export default function MovieModal({
             <p className="text-md text-white/95 mt-3">{movie.overview}</p>
           </div>
         </div>
+
+        {/* Votes, Rating, Language, Release_date */}
         <div className="flex flex-col w-full h-fit">
           <div className="flex gap-2 w-full border-y border-slate-600/75 my-2 py-1 tracking-tight">
-            <p className="font-semibold text-sm lg:text-lg">
+            <p className="font-semibold text-sm">
               Votes: <span className="font-light">{movie.vote_count}</span>
             </p>
             •
-            <p className="text-sm lg:text-lg font-semibold font-sans">
+            <p className="font-semibold text-sm">
               Rating:{" "}
               <span className="font-light">
                 {Math.floor(movie.vote_average)}/10
               </span>
             </p>
             •
-            <p className="text-sm lg:text-lg font-semibold font-sans">
-              Language: <span className="font-light">{movie.language}</span>
+            <p className="font-semibold text-sm">
+              Language:{" "}
+              <span className="font-light uppercase">
+                {movie.original_language}
+              </span>
             </p>
-            <p className="text-sm lg:text-lg font-semibold font-sans">
+            •
+            <p className="font-semibold text-sm">
               Release: <span className="font-light">{movie.release_date}</span>
             </p>
           </div>
           <div className="flex w-full h-fit gap-4 items-center">
-            {action === "logged-in" && (
+            {action === "logged-in" ? (
               <>
                 {/* Add to watchlist */}
                 <WatchlistButton
@@ -145,16 +152,24 @@ export default function MovieModal({
                 />
 
                 {/* Rating button */}
-                <Button
-                  type="button"
-                  aria-pressed={isRated}
-                  onClick={() => setIsRated((prev) => !prev)}
-                  className={`${isRated ? "bg-yellow-400" : "bg-transparent"} border border-yellow-400 cursor-pointer hover:bg-yellow-400/25 hover:text-white active:bg-yellow-400 active:text-black`}
+                <RatingsButton
+                  state={isRated}
+                  onConfirm={() => setIsRated((prev) => !prev)}
+                />
+                <a
+                  href={`/dashboard/${movie.id}`}
+                  className="flex text-sm text-yellow-400 border border-yellow-400 rounded-2xl px-3 py-2 hover:bg-yellow-400 hover:text-black cursor-pointer transition-all duration-100"
                 >
-                  {isRated ? <Check size={18} className="text-black"/> : <ThumbsUp size={18} className="text-yellow-400"/>}
-                  <span className={isRated ? "text-black" : "text-yellow-400"}>{isRated ? "Rated" : "Rate this movie"}</span>
-                </Button>
+                  Visit movie page
+                </a>
               </>
+            ) : (
+              <a
+                href={`/dashboard/${movie.id}`}
+                className="flex text-sm text-yellow-400 border border-yellow-400 rounded-2xl px-3 py-2 hover:bg-yellow-400 hover:text-black cursor-pointer transition-all duration-100"
+              >
+                Visit movie page
+              </a>
             )}
           </div>
         </div>

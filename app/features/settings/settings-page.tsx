@@ -13,7 +13,7 @@ import { deleteAccount } from "./actions";
 import { DialogTrigger } from "@/components/ui/dialog";
 import DialogComponent from "@/app/components/layout/dialog";
 
-export default function SettingsPage({user, genres}: {user: User, genres: Genre[]}) {
+export default function SettingsPage({user, genres}: {user: User | null, genres: Genre[]}) {
 
   useEffect(() => {
     document.title = "Settings | Film.io"
@@ -73,7 +73,7 @@ export default function SettingsPage({user, genres}: {user: User, genres: Genre[
         {/* Profile card */}
         <Card size={"default"} className="w-full bg-slate-900 my-4 rounded-xl">
           <CardContent className="flex w-full justify-between">
-            <ProfileCard user={user} />
+            {user && <ProfileCard user={user} />}
             <Button
               type="button"
               className="border border-red-400 rounded-lg hover:bg-red-400/25 cursor-pointer active:bg-red-400/50"

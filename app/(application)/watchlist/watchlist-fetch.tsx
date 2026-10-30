@@ -14,8 +14,8 @@ export default async function WatchlistFetch({ searchParams}: {searchParams: Pro
     const page = Math.max(1, Math.floor(Number(pageParam)) || 1);
 
     const [totalMovieCount, result] = await Promise.all([
-      getTotalNumberOfWatchlistMovies(user.sub),
-      fetchAllWatchlistMovies(user.sub, page),
+      getTotalNumberOfWatchlistMovies(),
+      fetchAllWatchlistMovies(page),
     ]);
 
     if (!result.success) return <p role="alert">{result.error}</p>;

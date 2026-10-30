@@ -5,12 +5,13 @@ interface WatchlistButton {
     state: boolean,
     onClick: () => void,
     disabled: boolean,
+    className?: string,
 }
 
-export default function WatchlistButton ({ state, onClick, disabled}: WatchlistButton) {
+export default function WatchlistButton ({ state, onClick, disabled, className}: WatchlistButton) {
     return (
       <Button
-        className={`${state ? "bg-yellow-400" : "bg-transparent"} border border-yellow-400 items-center justify-center hover:bg-yellow-400/25 cursor-pointer`}
+        className={`${className} ${state ? "bg-yellow-400" : "bg-transparent"} border border-yellow-400 items-center justify-center hover:bg-yellow-400/25 cursor-pointer`}
         type="button"
         onClick={onClick}
         isDisabled={disabled}

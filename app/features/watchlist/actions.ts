@@ -3,7 +3,7 @@
 import { auth0 } from '@/app/lib/auth/auth0'
 import { sql } from '@/app/lib/db'
 import { MovieItem } from '@/types';
-import { cacheLife, cacheTag, revalidatePath } from 'next/cache';
+import { revalidatePath } from 'next/cache';
 import { addPosterUrlToBatch } from '../dashboard/queries';
 
 const retrieveUserId = async (): Promise<string | null> => {
@@ -13,11 +13,13 @@ const retrieveUserId = async (): Promise<string | null> => {
 
 export const addMovieToWatchlist = async (movie_id: string) => {
     // remove stored cache and fetch new data next time
-    revalidatePath(`/dashboard/${movie_id}`);
     const user_id = await retrieveUserId();
     if (!user_id) {
-        return { error: "You must be logged in to add movies", success: false };
+        return { error: "User not authenticated", success: false };
     }
+
+    const safeId = Number(movie_id);
+    if (!Number.isInteger(safeId)) return { success: false, error: "Invalid movie"}
 
     try {
         await sql `
@@ -25,6 +27,7 @@ export const addMovieToWatchlist = async (movie_id: string) => {
             VALUES (${user_id}, ${movie_id})
             ON CONFLICT (user_id, movie_id) DO NOTHING
         `
+        revalidatePath(`/dashboard/${movie_id}`);
         return { success: true };
     } catch (err) {
         console.error("addMovieToWatchlist failed: ", err);
@@ -34,17 +37,20 @@ export const addMovieToWatchlist = async (movie_id: string) => {
 
 export const deleteMovieFromWatchlist = async (movie_id: string) => {
     // remove stored cache and fetch new data next time
-    revalidatePath(`/dashboard/${movie_id}`);
     const user_id = await retrieveUserId();
     if (!user_id) {
-        return { error: "User not authenticate", success: false }
+        return { error: "User not authenticated", success: false }
     }
+    
+    const safeId = Number(movie_id);
+    if (!Number.isInteger(movie_id)) return { success: false, error: "Invalid movie"}
 
     try {
         await sql `
             DELETE FROM watchlist 
-            WHERE user_id = ${user_id} AND movie_id = ${movie_id}
-        `
+            WHERE user_id = ${user_id} AND movie_id = ${safeId}
+        `;
+        revalidatePath(`/dashboard/${safeId}`);
         return { success: true}
     } catch (err) {
         console.error("Movie removal failed: ", err);
@@ -52,20 +58,33 @@ export const deleteMovieFromWatchlist = async (movie_id: string) => {
     }
 }
 
-export const getTotalNumberOfWatchlistMovies = async (user_id: string) => {
+export const getTotalNumberOfWatchlistMovies = async () => {
+    const user_id = await retrieveUserId();
+    if (!user_id) return 0;
     const [{count}] = await sql `
-        SELECT COUNT(*) FROM watchlist
+        SELECT COUNT(*)::int AS count FROM watchlist
         WHERE user_id = ${user_id}
     `;
-
     return count;
 }
 
-export const fetchAllWatchlistMovies = async (user_id: string, page: number): Promise<{success: false, response: [], error: string} | {success: true, response: MovieItem[], error: null}> => {
+export const fetchAllWatchlistMovies = async (page: number): Promise<{success: false, response: [], error: string} | {success: true, response: MovieItem[], error: null}> => {
+    const user_id = await retrieveUserId();
+    if (!user_id) return { success: false, response: [], error: "Unauthenticated user"};
+
+    const safePage = Number.isInteger(page) && page > 0 ? page : 1;
     try {
         const response = (await sql `
             SELECT 
-                movies.*,
+                movies.id,
+                movies.title,
+                movies.poster_path,
+                movies.release_date,
+                movies.vote_average,
+                movies.vote_count,
+                movies.popularity,
+                movies.overview,
+                movies.language AS original_language,
                 COALESCE(
                     JSON_AGG(genres.title) FILTER (WHERE genres.id IS NOT NULL),
                     '[]'
@@ -76,11 +95,11 @@ export const fetchAllWatchlistMovies = async (user_id: string, page: number): Pr
             LEFT JOIN genres ON genres.id = movie_genre_join.genre_id
             WHERE watchlist.user_id = ${user_id}
             GROUP BY movies.id, watchlist.created_at
-            ORDER BY watchlist.created_at DESC
-            LIMIT 6 OFFSET ${(page - 1) * 6}
+            ORDER BY watchlist.created_at DESC, movies.id
+            LIMIT 6 OFFSET ${(safePage - 1) * 6}
         `) as MovieItem[];
 
-        return { success: true, response: addPosterUrlToBatch(response), error: null };
+        return { success: true, response: addPosterUrlToBatch({ movies: response, size: "w500"}), error: null };
     } catch (err) {
         console.error("fetchAllWatchlistMovies failed: ", err);
         return { success: false, error: "Failed fetching watchlist movies.", response: []}
