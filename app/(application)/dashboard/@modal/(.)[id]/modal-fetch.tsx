@@ -2,7 +2,6 @@ import MovieModal from "@/app/components/layout/movie-modal";
 import { getMovie } from "@/app/features/dashboard/queries";
 import { getUser } from "@/app/lib/auth/get-user";
 import { sql } from "@/app/lib/db";
-import { revalidatePath } from "next/cache";
 import { notFound } from "next/navigation";
 
 export default async function ModalFetch({params}: {params: Promise<{id: string}>}) {
@@ -32,11 +31,22 @@ export default async function ModalFetch({params}: {params: Promise<{id: string}
             `;
           inWatchlist = !!row;
         }
+
+        // check if the movie is in the ratings
+        let inRatings = false;
+        if (user_id) {
+          const [row] = await sql `
+            SELECT 1 FROM ratings
+            WHERE user_id = ${user_id} AND movie_id = ${cleanedId}
+          `
+          inRatings = !!row;
+        }
         
         return (
           <MovieModal
             movie={movie}
             inWatchlist={inWatchlist}
+            inRatings={inRatings}
             action={user_id ? "logged-in" : "logged-out"}
           />
         );

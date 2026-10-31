@@ -4,7 +4,7 @@ import { DropdownMenu, DropdownMenuGroup, DropdownMenuItem, DropdownMenuSeparato
 import { SidebarFooter } from "@/components/ui/sidebar";
 import { User } from "@auth0/nextjs-auth0/types";
 import { ArrowUpRight, ChevronsUpDown, LogOut, UserIcon } from "lucide-react";
-import { redirect, useRouter } from "next/navigation";
+import { redirect } from "next/navigation";
 import DialogComponent from "../dialog";
 import { logout } from "@/app/features/dashboard/actions";
 import { DialogTrigger } from "@/components/ui/dialog";

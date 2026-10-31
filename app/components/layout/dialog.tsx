@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog";
-import { ChevronLeft, Loader2 } from "lucide-react";
+import { ChevronLeft, Loader2, LogOut } from "lucide-react";
 import { ActionResult } from "next/dist/shared/lib/app-router-types";
 import { useState, useTransition } from "react";
 
@@ -57,14 +57,18 @@ export default function DialogComponent({ title, content, onConfirm, yesButtonTe
                 className="border border-red text-red-500 hover:bg-red-500/25 active:bg-red-500 gap-3 items-center active:text-white active:border-red-500 cursor-pointer px-5"
                 isDisabled={isPending}
               >
+                
                 {
                     isPending ? 
-                    <div className="flex">
+                    <div className="flex items-center gap-1">
                         <Loader2 size={16} className="animate-spin"/>
                         <p>{pendingText}</p>    
                         </div> 
                     : 
-                    yesButtonText
+                    <div className="flex items-center gap-1">
+                      <LogOut size={18} className="min-w-5 h-auto text-red-600"/>
+                      <p>{yesButtonText}</p>
+                    </div>
                 }
               </Button>
             </form>

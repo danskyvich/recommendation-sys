@@ -1,5 +1,6 @@
 "use client";
 
+import { addRating, deleteRating, isValidRating } from "@/app/features/ratings/actions";
 import RatingsButton from "@/app/features/ratings/components/ratings-button";
 // movie-card.tsx
 import {
@@ -7,20 +8,20 @@ import {
   deleteMovieFromWatchlist,
 } from "@/app/features/watchlist/actions";
 import WatchlistButton from "@/app/features/watchlist/components/watchlist-button";
-import { Button } from "@/components/ui/button";
-import { MovieItem } from "@/types";
-import { Check, ThumbsUp, X } from "lucide-react";
+import { MovieItem, Rating } from "@/types";
+import { X } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useOptimistic, useState, useTransition } from "react";
 
 export default function MovieModal({
   action,
   inWatchlist = false,
+  inRatings = false,
   movie,
 }: {
   inWatchlist?: boolean;
+  inRatings?: boolean;
   action: "logged-out" | "logged-in";
   movie: MovieItem;
 }) {
@@ -31,7 +32,11 @@ export default function MovieModal({
     inWatchlist,
     (_current, next: boolean) => next,
   );
-  const [isRated, setIsRated] = useState<boolean>(false);
+  const [optimisticRatings, setOptimisticRatings] = useOptimistic(
+    inRatings,
+    (_current, next: boolean) => next,
+  )
+  const [rating, setRating] = useState<number | null>(null);
   const [isPending, startTransition] = useTransition();
 
   // closes modal using either x or ESC keys
@@ -63,9 +68,35 @@ export default function MovieModal({
     });
   };
 
+  // handle ratings
+  const handleRatingsAction = () => {
+    const next = !inRatings;
+
+    if (next && (rating === null || !isValidRating(rating))) {
+      console.error("Invalid rating input.");
+      return;
+    }
+
+    startTransition(async () => {
+      setOptimisticRatings(next);
+
+      try {
+        const response = next
+          ? await addRating(rating as Rating, String(movie.id))
+          : await deleteRating(String(movie.id));
+        if (!response.success) {
+          console.error(response.error);
+          //TODO: Add a component that show an error to the client
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    });
+  };
+
   return (
-    <div
-      className="fixed inset-0 z-60 flex items-center justify-center bg-black/50"
+    <article
+      className="fixed inset-0 z-40 flex items-center justify-center bg-black/50"
       role="dialog"
       aria-labelledby={`${movie.title}`}
       aria-modal={true}
@@ -153,12 +184,13 @@ export default function MovieModal({
 
                 {/* Rating button */}
                 <RatingsButton
-                  state={isRated}
-                  onConfirm={() => setIsRated((prev) => !prev)}
+                  state={optimisticRatings}
+                  disabled={isPending}
+                  onConfirm={handleRatingsAction}
                 />
                 <a
                   href={`/dashboard/${movie.id}`}
-                  className="flex text-sm text-yellow-400 border border-yellow-400 rounded-2xl px-3 py-2 hover:bg-yellow-400 hover:text-black cursor-pointer transition-all duration-100"
+                  className="flex text-sm text-yellow-400 border border-yellow-400 rounded-2xl px-3 py-2 hover:bg-yellow-400/25 hover:text-yellow-400 active:bg-yellow-400 active:text-black cursor-pointer transition-all duration-100"
                 >
                   Visit movie page
                 </a>
@@ -166,7 +198,7 @@ export default function MovieModal({
             ) : (
               <a
                 href={`/dashboard/${movie.id}`}
-                className="flex text-sm text-yellow-400 border border-yellow-400 rounded-2xl px-3 py-2 hover:bg-yellow-400 hover:text-black cursor-pointer transition-all duration-100"
+                className="flex text-sm text-yellow-400 border border-yellow-400 rounded-2xl px-3 py-2 hover:bg-yellow-400/25 active:bg-yellow-400 hover:text-yellow-400 active:text-black cursor-pointer transition-all duration-100"
               >
                 Visit movie page
               </a>
@@ -174,6 +206,6 @@ export default function MovieModal({
           </div>
         </div>
       </div>
-    </div>
+    </article>
   );
 }

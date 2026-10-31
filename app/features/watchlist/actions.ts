@@ -11,23 +11,23 @@ const retrieveUserId = async (): Promise<string | null> => {
     return session?.user?.sub ?? null;
 }
 
+// INSERT movie to watchlist
 export const addMovieToWatchlist = async (movie_id: string) => {
-    // remove stored cache and fetch new data next time
     const user_id = await retrieveUserId();
     if (!user_id) {
         return { error: "User not authenticated", success: false };
     }
 
     const safeId = Number(movie_id);
-    if (!Number.isInteger(safeId)) return { success: false, error: "Invalid movie"}
+    if (!Number.isSafeInteger(safeId) || safeId <= 0) return { success: false, error: "Invalid movie"}
 
     try {
         await sql `
             INSERT INTO watchlist (user_id, movie_id)
-            VALUES (${user_id}, ${movie_id})
+            VALUES (${user_id}, ${safeId})
             ON CONFLICT (user_id, movie_id) DO NOTHING
         `
-        revalidatePath(`/dashboard/${movie_id}`);
+        revalidatePath(`/dashboard/${safeId}`);
         return { success: true };
     } catch (err) {
         console.error("addMovieToWatchlist failed: ", err);
@@ -35,15 +35,15 @@ export const addMovieToWatchlist = async (movie_id: string) => {
     }
 }
 
+// DELETE movie to watchlist
 export const deleteMovieFromWatchlist = async (movie_id: string) => {
-    // remove stored cache and fetch new data next time
     const user_id = await retrieveUserId();
     if (!user_id) {
         return { error: "User not authenticated", success: false }
     }
     
     const safeId = Number(movie_id);
-    if (!Number.isInteger(movie_id)) return { success: false, error: "Invalid movie"}
+    if (!Number.isSafeInteger(safeId) || safeId <= 0) return { success: false, error: "Invalid movie"}
 
     try {
         await sql `
@@ -58,6 +58,7 @@ export const deleteMovieFromWatchlist = async (movie_id: string) => {
     }
 }
 
+// FETCH count
 export const getTotalNumberOfWatchlistMovies = async () => {
     const user_id = await retrieveUserId();
     if (!user_id) return 0;
@@ -67,7 +68,7 @@ export const getTotalNumberOfWatchlistMovies = async () => {
     `;
     return count;
 }
-
+// FETCH all watchlist movies + count
 export const fetchAllWatchlistMovies = async (page: number): Promise<{success: false, response: [], error: string} | {success: true, response: MovieItem[], error: null}> => {
     const user_id = await retrieveUserId();
     if (!user_id) return { success: false, response: [], error: "Unauthenticated user"};

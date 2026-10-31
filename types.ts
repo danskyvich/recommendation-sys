@@ -10,6 +10,8 @@ type ProductionCompanies = {
     origin_country: string
 }
 
+export type Rating = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
+
 export type TMDBImageSizes = "w185" | "w500" | "original";
 
 // MOVIE TYPES
