@@ -48,6 +48,7 @@ export default function MovieModal({
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [router]);
 
+  //TODO: migrate these two functions to watchlist helper function
   // handle watchlist
   const handleWatchlistToggle = () => {
     startTransition(async () => {
@@ -69,29 +70,38 @@ export default function MovieModal({
   };
 
   // handle ratings
-  const handleRatingsAction = (rating: number) => {
-    const next = !inRatings;
+  const handleAddRating = async (rating: number): Promise<{ success: boolean }> => {
+    try {
+      const response = await addRating(rating as Rating, String(movie.id));
 
-    if (next && (rating === null || !isValidRating(rating))) {
-      console.error("Invalid rating input.");
-      return;
-    }
-
-    startTransition(async () => {
-      setOptimisticRatings(next);
-
-      try {
-        const response = next
-          ? await addRating(rating as Rating, String(movie.id))
-          : await deleteRating(String(movie.id));
-        if (!response.success) {
-          console.error(response.error);
-          //TODO: Add a component that show an error to the client
-        }
-      } catch (err) {
-        console.error(err);
+      if (!response.success) {
+        console.error(response.error);
+        return { success: false };
       }
-    });
+
+      startTransition(() => setOptimisticRatings(true));
+      return { success: true };
+    } catch (err) {
+      console.error(err);
+      return { success: false}
+    }
+  };
+
+  const handleRemoveRating = async (): Promise<{ success: boolean }> => {
+    try {
+      const response = await deleteRating(String(movie.id));
+
+      if (!response.success) {
+        console.error(response.error);
+        return { success: false };
+      }
+
+      startTransition(() => setOptimisticRatings(true));
+      return { success: true };
+    } catch (err) {
+      console.error(err);
+      return { success: false };
+    }
   };
 
   return (
@@ -186,7 +196,9 @@ export default function MovieModal({
                 <RatingsButton
                   state={optimisticRatings}
                   disabled={isPending}
-                  onConfirm={handleRatingsAction}
+                  onConfirm={handleAddRating}
+                  onRemove={handleRemoveRating}
+                  open
                 />
                 <a
                   href={`/dashboard/${movie.id}`}

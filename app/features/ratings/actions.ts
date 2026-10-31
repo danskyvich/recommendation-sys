@@ -10,7 +10,7 @@ import { addPosterUrlToBatch } from "../dashboard/queries";
 // INSERT rating
 export const addRating = async (rating: Rating, movie_id: string): Promise<{success: true, error: null } | {success: false, error: string}> => {
     // validate rating input
-    if (isValidRating(rating)) return { success: false, error: "Invalid rating input."};
+    if (!isValidRating(rating)) return { success: false, error: "Invalid rating input."};
 
     const cleanedId = Number(movie_id);
     if (!Number.isSafeInteger(cleanedId) || cleanedId <= 0) return { success: false, error: "Invalid movie."};

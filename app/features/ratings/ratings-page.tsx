@@ -1,12 +1,10 @@
 "use client"
 
 import BrowseMoviesButton from "@/app/components/layout/browse-button";
-import { Button } from "@/components/ui/button";
 import { MovieItem } from "@/types";
-import { ArrowUpDown, ArrowUpRight, CircleQuestionMark } from "lucide-react";
+import { CircleQuestionMark } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { useEffect } from "react";
 
 interface RatingsPageProps {

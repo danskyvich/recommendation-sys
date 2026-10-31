@@ -4,21 +4,19 @@ import { MovieFull, Rating } from "@/types";
 import { ArrowUpRight, Star } from "lucide-react";
 import Image from "next/image";
 import WatchlistButton from "../../watchlist/components/watchlist-button";
-import { useEffect, useOptimistic, useState, useTransition } from "react";
+import { useEffect, useOptimistic, useTransition } from "react";
 import { addMovieToWatchlist, deleteMovieFromWatchlist } from "../../watchlist/actions";
-import { User } from "@auth0/nextjs-auth0/types";
 import RatingsButton from "../../ratings/components/ratings-button";
 import { Button } from "@/components/ui/button";
 import { transformCodesToCountry } from "@/app/utils/transformCodesToCountry";
 import { redirect } from "next/navigation";
 import { addRating, deleteRating } from "../../ratings/actions";
-import { isValidRating } from "@/app/utils/validateRatingInput";
 
 interface MoviePageProps {
   movie: MovieFull;
   inWatchlist: boolean;
   inRatings: boolean;
-  user: User | null;
+  user: string | undefined;
 }
 
 export default function MoviePage({movie, inWatchlist, user, inRatings}: MoviePageProps) {
@@ -35,7 +33,6 @@ export default function MoviePage({movie, inWatchlist, user, inRatings}: MoviePa
         inRatings,
         (_current, next: boolean) => next,
       )
-    const [rating, setRating] = useState<number | null>(null);
     const [isPending, startTransition] = useTransition();
 
     const handleWatchlistToggle = () => {
@@ -54,30 +51,41 @@ export default function MoviePage({movie, inWatchlist, user, inRatings}: MoviePa
         })
     }
 
-    // handle ratings
-      const handleRatingsAction = (rating: number) => {
-        const next = !inRatings;
-    
-        if (next && (rating === null || !isValidRating(rating))) {
-          console.error("Invalid rating input.");
-          return;
+    const handleAddRating = async (
+      rating: number,
+    ): Promise<{ success: boolean }> => {
+      try {
+        const response = await addRating(rating as Rating, String(movie.id));
+
+        if (!response.success) {
+          console.error(response.error);
+          return { success: false };
         }
-    
-        startTransition(async () => {
-          setOptimisticRatings(next);
-          try {
-            const response = next
-              ? await addRating(rating as Rating, String(movie.id))
-              : await deleteRating(String(movie.id));
-            if (!response.success) {
-              console.error(response.error);
-              //TODO: Add a component that show an error to the client
-            }
-          } catch (err) {
-            console.error(err);
-          }
-        });
-      };
+
+        startTransition(() => setOptimisticRatings(true));
+        return { success: true };
+      } catch (err) {
+        console.error(err);
+        return { success: false };
+      }
+    };
+
+    const handleRemoveRating = async (): Promise<{ success: boolean }> => {
+      try {
+        const response = await deleteRating(String(movie.id));
+
+        if (!response.success) {
+          console.error(response.error);
+          return { success: false };
+        }
+
+        startTransition(() => setOptimisticRatings(false)); // false, not true
+        return { success: true };
+      } catch (err) {
+        console.error(err);
+        return { success: false };
+      }
+    };
     
     return (
       <main className="flex flex-col w-full h-full overflow-y-auto overflow-x-hidden pt-5">
@@ -191,8 +199,10 @@ export default function MoviePage({movie, inWatchlist, user, inRatings}: MoviePa
               />
               <RatingsButton
                 state={optimisticRatings}
-                onConfirm={handleRatingsAction}
+                onConfirm={handleAddRating}
+                onRemove={handleRemoveRating}
                 disabled={isPending}
+                open
               />
             </div>
           ) : (

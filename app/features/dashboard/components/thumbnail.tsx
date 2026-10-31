@@ -4,6 +4,10 @@ import { MovieItem } from "@/types";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { getGenre } from "../actions";
+import WatchlistButton from "../../watchlist/components/watchlist-button";
+import RatingsButton from "../../ratings/components/ratings-button";
+import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
 
 interface ThumbnailProps {
   selectedItem: MovieItem;
@@ -19,7 +23,6 @@ export default function Thumbnail({ selectedItem }: ThumbnailProps) {
   }, []);
 
   useEffect(() => {
-    console.log("fetching genres for", selectedItem?.id);
     let ignore = false;
 
     getGenre(selectedItem?.id).then((titles) => {
@@ -45,22 +48,20 @@ export default function Thumbnail({ selectedItem }: ThumbnailProps) {
 
           {/* Other info */}
           <div className="flex items-center gap-2 w-fit h-full py-2 text-sm text-white/65 font-light">
-
             {/* Ratings */}
             <p className="bg-yellow-400 text-black px-2 rounded-md py-1 font-semibold">
               {Math.floor(selectedItem?.vote_average ?? 0)}/10
             </p>
-
-            {/* Date */}
-            •<p>{selectedItem?.release_date}</p>•
-            
-            {/* Genres */}
-            <div className="flex w-fit gap-3"> 
-              {
-                genres.map((genre, id) => (
-                  <p key={id} className="border border-purple-400 px-2 py-1 text-black font-semibold bg-purple-400 rounded-md">{genre}</p>
-                ))
-              }
+            {/* Date */}•<p>{selectedItem?.release_date}</p>•{/* Genres */}
+            <div className="flex w-fit gap-3">
+              {genres.map((genre, id) => (
+                <p
+                  key={id}
+                  className="border border-purple-400 px-2 py-1 text-black font-semibold bg-purple-400 rounded-md"
+                >
+                  {genre}
+                </p>
+              ))}
             </div>
           </div>
 
@@ -68,6 +69,16 @@ export default function Thumbnail({ selectedItem }: ThumbnailProps) {
           <p className="text-md font-sans font-light w-full md:w-[75%]">
             {selectedItem?.overview}
           </p>
+
+          <div className="flex w-full h-fit my-3">
+            <Link
+              href={`/dashboard/${selectedItem.id}`}
+              className="flex text-sm text-yellow-400 border border-yellow-400 rounded-2xl px-3 py-2 hover:bg-yellow-400/25 active:bg-yellow-400 hover:text-yellow-400 active:text-black cursor-pointer transition-all duration-100"
+            >
+              <ArrowUpRight size={18} className="text-yellow-400 cursor-pointer"/>
+              Visit movie page
+            </Link>
+          </div>
         </article>
       </div>
       {selectedItem.poster_path && (
