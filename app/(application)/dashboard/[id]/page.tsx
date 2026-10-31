@@ -23,6 +23,8 @@ export default async function MovieMain({params}: {params: SearchParams}) {
 
      const user_id = auth.user?.sub;
 
+
+     // check if the movie is in the user's watchlist
      let inWatchlist = false;
      if (!inWatchlist) {
         const result = await sql `
@@ -32,5 +34,15 @@ export default async function MovieMain({params}: {params: SearchParams}) {
         inWatchlist = !!result;
      }
 
-    return <MoviePage movie={movie} inWatchlist={inWatchlist} user={auth.user}/>
+     // check if the movie has been rated
+     let inRatings = false;
+     if (!inRatings) {
+         const result = await sql `
+            SELECT 1 FROM ratings
+            WHERE user_id = ${user_id} AND movie_id = ${movie_id}
+         `
+         inRatings = !!result;
+     }
+
+    return <MoviePage movie={movie} inWatchlist={inWatchlist} user={auth.user} inRatings={inRatings}/>
 }

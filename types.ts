@@ -28,6 +28,7 @@ export type MovieItem = {
     original_language: string,
     genres: string[],
     production_companies: ProductionCompanies[],
+    ratings: number,
 }
 
 // movie_modal

@@ -1,6 +1,6 @@
 "use client"
 
-import { MovieFull } from "@/types";
+import { MovieFull, Rating } from "@/types";
 import { ArrowUpRight, Star } from "lucide-react";
 import Image from "next/image";
 import WatchlistButton from "../../watchlist/components/watchlist-button";
@@ -11,8 +11,17 @@ import RatingsButton from "../../ratings/components/ratings-button";
 import { Button } from "@/components/ui/button";
 import { transformCodesToCountry } from "@/app/utils/transformCodesToCountry";
 import { redirect } from "next/navigation";
+import { addRating, deleteRating } from "../../ratings/actions";
+import { isValidRating } from "@/app/utils/validateRatingInput";
 
-export default function MoviePage({movie, inWatchlist, user}: {movie: MovieFull, inWatchlist: boolean, user: User | null}) {
+interface MoviePageProps {
+  movie: MovieFull;
+  inWatchlist: boolean;
+  inRatings: boolean;
+  user: User | null;
+}
+
+export default function MoviePage({movie, inWatchlist, user, inRatings}: MoviePageProps) {
 
     useEffect(() => {
         document.title = `${movie.title} | Film.io`
@@ -22,8 +31,12 @@ export default function MoviePage({movie, inWatchlist, user}: {movie: MovieFull,
         inWatchlist,
         (_current, next: boolean) => next,
     )
+    const [optimisticRatings, setOptimisticRatings] = useOptimistic(
+        inRatings,
+        (_current, next: boolean) => next,
+      )
+    const [rating, setRating] = useState<number | null>(null);
     const [isPending, startTransition] = useTransition();
-    const [isRated, setRated] = useState<boolean>(false);
 
     const handleWatchlistToggle = () => {
         startTransition(async() => {
@@ -40,6 +53,31 @@ export default function MoviePage({movie, inWatchlist, user}: {movie: MovieFull,
             }
         })
     }
+
+    // handle ratings
+      const handleRatingsAction = (rating: number) => {
+        const next = !inRatings;
+    
+        if (next && (rating === null || !isValidRating(rating))) {
+          console.error("Invalid rating input.");
+          return;
+        }
+    
+        startTransition(async () => {
+          setOptimisticRatings(next);
+          try {
+            const response = next
+              ? await addRating(rating as Rating, String(movie.id))
+              : await deleteRating(String(movie.id));
+            if (!response.success) {
+              console.error(response.error);
+              //TODO: Add a component that show an error to the client
+            }
+          } catch (err) {
+            console.error(err);
+          }
+        });
+      };
     
     return (
       <main className="flex flex-col w-full h-full overflow-y-auto overflow-x-hidden pt-5">
@@ -152,8 +190,9 @@ export default function MoviePage({movie, inWatchlist, user}: {movie: MovieFull,
                 onClick={handleWatchlistToggle}
               />
               <RatingsButton
-                state={isRated}
-                onConfirm={() => setRated((prev) => !prev)}
+                state={optimisticRatings}
+                onConfirm={handleRatingsAction}
+                disabled={isPending}
               />
             </div>
           ) : (

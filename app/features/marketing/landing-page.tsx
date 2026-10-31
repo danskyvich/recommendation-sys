@@ -1,5 +1,6 @@
 "use client";
 
+import BrowseMoviesButton from "@/app/components/layout/browse-button";
 import { Button } from "@/components/ui/button";
 import { ArrowUpRight } from "lucide-react";
 import Image from "next/image";
@@ -40,15 +41,7 @@ export default function LandingPage() {
             <ArrowUpRight size={18} className="min-w-3 h-auto"/>
             <p>Get started</p>
           </Button>
-          <Button
-            type="button"
-            onClick={() => redirect("/dashboard")}
-            className="border border-white hover:bg-white/15 active:text-black active:bg-white cursor-pointer"
-          >
-            <p>
-              Browse movies
-            </p>
-          </Button>
+          <BrowseMoviesButton/>
         </div>
       </article>
 

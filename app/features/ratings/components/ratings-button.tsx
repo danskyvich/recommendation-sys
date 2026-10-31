@@ -7,7 +7,7 @@ import { useState } from "react";
 
 interface RatingsButtonProps {
     state: boolean,
-    onConfirm: () => void;
+    onConfirm: (rating: number) => void;
     className?: string;
     disabled: boolean;
 }
@@ -15,10 +15,25 @@ interface RatingsButtonProps {
 export default function RatingsButton({ state, className, onConfirm, disabled }: RatingsButtonProps) {
 
   const [ratingCount, setRatingCount] = useState<number>(0);
+  const [hoverCount, setHoverCount] = useState<number>(0);
 
-  const stars = Array.from({ length: 5}, (_, index) => {
+  const MAX_STARS = 10;
+  const displayValue = hoverCount || ratingCount;
 
-    return <Star size={18} className="min-w-5 h-auto" key={index}/>;
+  // star rating
+  const stars = Array.from({ length: MAX_STARS}, (_, index) => {
+
+    const starValue = index + 1; // distinguishes each star 
+    const isFilled = starValue <= displayValue; // fills each star preceding the clicked/hover star
+    return (
+      <Star
+        size={30}
+        className={`${isFilled ? "fill-yellow-400" : "fill-transparent"} min-w-5 h-auto cursor-pointer text-yellow-400 hover:fill-yellow-400/75`}
+        key={starValue}
+        onMouseEnter={() => setHoverCount(starValue)}
+        onClick={() => setRatingCount(starValue)}
+      />
+    );
   })
     return (
       <DialogTrigger>
@@ -55,15 +70,18 @@ export default function RatingsButton({ state, className, onConfirm, disabled }:
               </p>
             </DialogHeader>
 
-            <div className="flex flex-row w-full h-fit my-3">{stars}</div>
+            <div className="flex flex-row w-full h-fit my-3 gap-5 items-center">
+              <div className="flex w-full gap-1" onMouseLeave={() => setHoverCount(0)}>{stars}</div>
+              <p className={"text-sm md:text-lg"}><span className={`${displayValue === 0 ? "text-white" : "text-yellow-400 font-semibold"}`}>{displayValue}</span>/10</p>
+            </div>
             <DialogFooter>
               <Button
                 isDisabled={disabled}
-                onClick={onConfirm}
-                className="border border-yellow-400 rounded-md hover:bg-yellow-400/25 cursor-pointer active:bg-yellow-400 active:text-black"
+                onClick={() => onConfirm(ratingCount)}
+                className={`${state ? "bg-yellow-400 text-black" : "bg-transparent text-yellow-400"} flex w-full border border-yellow-400 rounded-md hover:bg-yellow-400/25 cursor-pointer active:bg-yellow-400 active:text-black`}
               >
                 {state ? (
-                  <Check size={18} className="min-w-3 h-auto text-yellow-400" />
+                  <Check size={18} className="min-w-3 h-auto text-black" />
                 ) : (
                   <ThumbsUp
                     size={18}

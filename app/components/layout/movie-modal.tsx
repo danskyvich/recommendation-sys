@@ -1,6 +1,7 @@
 "use client";
 
-import { addRating, deleteRating, isValidRating } from "@/app/features/ratings/actions";
+import { addRating, deleteRating } from "@/app/features/ratings/actions";
+import { isValidRating } from "@/app/utils/validateRatingInput";
 import RatingsButton from "@/app/features/ratings/components/ratings-button";
 // movie-card.tsx
 import {
@@ -36,7 +37,6 @@ export default function MovieModal({
     inRatings,
     (_current, next: boolean) => next,
   )
-  const [rating, setRating] = useState<number | null>(null);
   const [isPending, startTransition] = useTransition();
 
   // closes modal using either x or ESC keys
@@ -69,7 +69,7 @@ export default function MovieModal({
   };
 
   // handle ratings
-  const handleRatingsAction = () => {
+  const handleRatingsAction = (rating: number) => {
     const next = !inRatings;
 
     if (next && (rating === null || !isValidRating(rating))) {
@@ -124,7 +124,7 @@ export default function MovieModal({
               <button type="button" aria-label="Close">
                 <X
                   size={18}
-                  className="min-w-5 h-auto cursor-pointer"
+                  className="min-w-5 h-auto cursor-pointer ml-5"
                   aria-label="Close"
                   onClick={() => router.back()}
                 />
