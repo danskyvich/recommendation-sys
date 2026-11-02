@@ -1,7 +1,7 @@
 "use server"
 
 import LoginPage from "@/app/features/auth/login-page";
-import { auth0 } from "@/app/lib/auth/auth0";
+import { auth0 } from "@/app/lib/auth/actions";
 import { redirect } from "next/navigation";
 
 export default async function Login() {

@@ -1,3 +1,4 @@
+import { getUser } from "@/app/lib/auth/get-user";
 import { sql } from "@/app/lib/db"
 import { AggregatedGenres, MovieFull, MovieItem, TMDBImageSizes } from "@/types";
 import { cacheLife, cacheTag } from "next/cache";
@@ -180,3 +181,36 @@ export const getMovie = cache(async(movie_id: number): Promise<MovieFull | null>
         return null;
     }
 });
+
+export const readRatedWatchlistedMovieIds = async (): Promise<number[]> => {
+    const user = (await getUser())?.user;
+    const user_id = user?.sub;
+
+    if (!user_id) return [];
+
+    try {
+        const response = await sql `
+            SELECT movie_id 
+            FROM ratings 
+            WHERE user_id = ${user_id} AND
+            COALESCE(
+                ( SELECT hide_movies FROM user_preferences WHERE user_id = ${user_id}),
+                 false
+            )
+            UNION
+            SELECT movie_Id 
+            FROM watchlist 
+            WHERE user_id = ${user_id} AND
+            COALESCE(
+                ( SELECT hide_movies FROM user_preferences WHERE user_id = ${user_id}),
+                 false
+            )
+        `;
+
+        return response.map((row) => Number(row.movie_id));
+    } catch (err) {
+        console.error(err);
+        return [];
+    }
+}
+

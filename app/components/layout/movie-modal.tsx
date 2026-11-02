@@ -10,10 +10,11 @@ import {
 } from "@/app/features/watchlist/actions";
 import WatchlistButton from "@/app/features/watchlist/components/watchlist-button";
 import { MovieItem, Rating } from "@/types";
-import { X } from "lucide-react";
+import { ArrowUp, ArrowUpRight, X } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useOptimistic, useState, useTransition } from "react";
+import Link from "next/link";
 
 export default function MovieModal({
   action,
@@ -204,6 +205,7 @@ export default function MovieModal({
                   href={`/dashboard/${movie.id}`}
                   className="flex text-sm text-yellow-400 border border-yellow-400 rounded-2xl px-3 py-2 hover:bg-yellow-400/25 hover:text-yellow-400 active:bg-yellow-400 active:text-black cursor-pointer transition-all duration-100"
                 >
+                  <ArrowUpRight size={18} className="h-auto" />
                   Visit movie page
                 </a>
               </>
@@ -212,6 +214,7 @@ export default function MovieModal({
                 href={`/dashboard/${movie.id}`}
                 className="flex text-sm text-yellow-400 border border-yellow-400 rounded-2xl px-3 py-2 hover:bg-yellow-400/25 active:bg-yellow-400 hover:text-yellow-400 active:text-black cursor-pointer transition-all duration-100"
               >
+                <ArrowUpRight size={18} className="h-auto" />
                 Visit movie page
               </a>
             )}

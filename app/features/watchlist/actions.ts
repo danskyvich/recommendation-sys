@@ -1,6 +1,6 @@
 "use server"
 
-import { auth0 } from '@/app/lib/auth/auth0'
+import { auth0 } from '@/app/lib/auth/actions'
 import { sql } from '@/app/lib/db'
 import { MovieItem } from '@/types';
 import { revalidatePath } from 'next/cache';

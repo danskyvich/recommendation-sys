@@ -4,35 +4,42 @@ import ProfileCard from "@/app/features/settings/components/profile-card";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { User } from "@auth0/nextjs-auth0/types";
-import { Eye, LogOut, Redo, Trash, X } from "lucide-react";
+import { LogOut, Redo, Trash, X } from "lucide-react";
 import Link from "next/link";
+import { clearRatingsAndWatchlist, deleteAccount, hideAndShowMovies, redoOnboarding } from "./actions";
 import { PreferenceChips } from "./components/preference-chips";
 import { Genre } from "@/types";
-import { startTransition, useEffect, useState } from "react";
-import { deleteAccount } from "./actions";
+import { useEffect, useState, useTransition } from "react";
 import { DialogTrigger } from "@/components/ui/dialog";
 import DialogComponent from "@/app/components/layout/dialog";
+import { Switch } from "@/components/ui/switch";
 
-export default function SettingsPage({user, genres}: {user: User | null, genres: Genre[]}) {
+interface SettingsPageProps {
+  user: User | null,
+  genres: Genre[],
+  initialHideMovies: boolean,
+}
 
+export default function SettingsPage({ user, genres, initialHideMovies }: SettingsPageProps) {
   useEffect(() => {
-    document.title = "Settings | Film.io"
-  })
+    document.title = "Settings | Film.io";
+  }, []);
+
+  const [switchToggle, setSwitchToggle] = useState<boolean>(initialHideMovies);
+  const [isPending, startTransition] = useTransition();
 
   const PROFILE_SETTINGS = [
-    {
-      name: "Hide watched or rated movies",
-      description: "Hide movies that you had either watched or rated.",
-      value: "Hide movies",
-      icon: <Eye size={18} className="min-w-3 h-auto" />,
-      link: "/",
-    },
     {
       name: "Clear my ratings and watchlist",
       description: "Clear rated movies and movies added in your watchlist",
       value: "Clear ratings and watchlists",
       icon: <X size={18} className="min-w-3 h-auto" />,
-      link: "/",
+      content:
+        "Are you sure you want to clear your watchlist and all rated movies?",
+      onConfirm: clearRatingsAndWatchlist,
+      yesButtonText: "Clear data",
+      noButtonText: "No",
+      pendingText: "Clearing...",
     },
     {
       name: "Redo onboarding",
@@ -40,7 +47,12 @@ export default function SettingsPage({user, genres}: {user: User | null, genres:
         "Allows you to rerun the onboarding process on the next successful sign in.",
       value: "Redo onboarding",
       icon: <Redo size={18} className="min-w-3 h-auto" />,
-      link: "/",
+      content:
+        "Do you want to clear your onboarding options and redo it? This will take effect on the next sign in.",
+      onConfirm: redoOnboarding,
+      yesButtonText: "Redo onboarding",
+      noButtonText: "No",
+      pendingText: "Saving...",
     },
   ];
   const SECURITY_SETTINGS = [
@@ -53,13 +65,23 @@ export default function SettingsPage({user, genres}: {user: User | null, genres:
       className:
         "border-red-400 text-red-400 hover:bg-red-400/25 active:bg-red-400 active:border-red-800 active:text-red-800",
       title: "Are you sure?",
-      content: "This action cannot be undone. This will permanently delete your account and remove your data from our servers.",
+      content:
+        "This action cannot be undone. This will permanently delete your account and remove your data from our servers.",
       onConfirm: deleteAccount,
       yesButtonText: "Delete my account",
       noButtonText: "Back",
-      pendingText: "Deleting..."
+      pendingText: "Deleting...",
     },
   ];
+
+  const handleHideMovies = (value: boolean) => {
+    setSwitchToggle(value);
+
+    startTransition(async () => {
+      const result = await hideAndShowMovies(value);
+      if (!result.success) setSwitchToggle(!value); // unchanged
+    });
+  };
 
   return (
     <main className="flex flex-col w-full h-full overflow-y-auto overflow-x-hidden px-[5dvw] sm:px-[10dvw] xl:px-[20dvw] pt-10 pb-[5%] gap-3">
@@ -112,7 +134,28 @@ export default function SettingsPage({user, genres}: {user: User | null, genres:
         </h1>
         <hr className="border-white/25" />
 
+        {/* Hide rated movies and watchlist movies */}
         <article className="flex flex-col w-full h-fit py-5 gap-5">
+          <div className="flex w-full justify-between items-center">
+            <div className="flex flex-col">
+              <p className="text-md font-semibold">
+                Hide watchlist and rated movies
+              </p>
+              <p className="text-[0.8rem] text-white/70">
+                Hide your watchlist movies and rated movies from the dashboard.
+              </p>
+            </div>
+            <Switch
+              size="default"
+              id="switch-checked-hide"
+              className="cursor-pointer"
+              isSelected={switchToggle}
+              onChange={handleHideMovies}
+              isDisabled={isPending}
+            ></Switch>
+          </div>
+
+          {/* Clear watchlist and rated + redo onboarding buttons */}
           {PROFILE_SETTINGS.map((item, id) => (
             <div className="flex w-full justify-between items-center" key={id}>
               <div className="flex flex-col">
@@ -121,20 +164,25 @@ export default function SettingsPage({user, genres}: {user: User | null, genres:
                   {item.description}
                 </p>
               </div>
-
-              <Button
-                type="button"
-                aria-label={`${item.value} button`}
-                className="border border-white cursor-pointer hover:bg-white/25 active:border-white active:bg-white active:text-black"
-              >
-                <Link
-                  href={item.link}
-                  className="flex w-fit gap-2 items-center"
+              <DialogTrigger>
+                <Button
+                  type="button"
+                  onPress={() => console.log("pressed")}
+                  aria-label={`${item.value} button`}
+                  className="border border-white cursor-pointer hover:bg-white/25 active:border-white active:bg-white active:text-black"
                 >
                   {item.icon}
                   <p>{item.value}</p>
-                </Link>
-              </Button>
+                </Button>
+                <DialogComponent
+                  title={item.name}
+                  content={item.content}
+                  yesButtonText={item.yesButtonText}
+                  noButtonText={item.noButtonText}
+                  pendingText={item.pendingText}
+                  onConfirm={item.onConfirm}
+                />
+              </DialogTrigger>
             </div>
           ))}
         </article>

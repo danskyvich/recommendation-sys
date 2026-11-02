@@ -13,7 +13,6 @@ import { AggregatedGenres, MovieItem } from "@/types";
 import Thumbnail from "./components/thumbnail";
 import ThumbnailSkeleton from "./components/skeleton/thumbnail-skeleton";
 import { FEATURED } from "@/types";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 interface DashboardProps {

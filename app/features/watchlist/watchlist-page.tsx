@@ -38,7 +38,8 @@ export default function WatchListPage({
       </section>
       <hr className="border-white/35 mt-1" />
 
-      <section className="relative grid grid-cols-3 lg:grid-cols-4 gap-x-5 gap-y-5 w-full h-full mt-4 justify-evenly">
+      {/* Movies */}
+      <section className="relative grid grid-cols-3 lg:grid-cols-4 gap-x-5 gap-y-5 w-full h-full mt-4">
         {watchlistMovies.length === 0 ? (
           <>
             <div className="absolute flex flex-col gap-3 inset-0 w-full h-full items-center justify-center">

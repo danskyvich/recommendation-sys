@@ -3,7 +3,6 @@
 import { getUser } from "@/app/lib/auth/get-user";
 import { sql } from "@/app/lib/db";
 import { ManagementClient } from "auth0";
-import { cacheLife, cacheTag } from "next/cache";
 import { redirect } from "next/navigation";
 
 const management = new ManagementClient({
@@ -30,5 +29,48 @@ export async function deleteAccount() {
     }
 
     redirect("/auth/logout");
-
 } 
+
+export async function clearRatingsAndWatchlist() {
+    const user = (await getUser())?.user;
+    const user_id = user?.sub;
+
+    if (!user_id) return { success: false, error: "Unauthenticated user."};
+
+    try {
+        await sql.transaction([
+            sql `DELETE FROM ratings
+            WHERE user_id = ${user_id}`,
+            sql `DELETE FROM watchlist
+            WHERE user_id = ${user_id}         `
+        ]);
+        return { success: true, error: null }
+    } catch (err) {
+        console.error(err);
+        return { success: false, error: "clearRatingsAndWatchlist failed"}
+    }
+}
+export async function redoOnboarding() {
+    return {}
+}
+
+// Hide and show rated and watchlist movies
+export async function hideAndShowMovies(show: boolean): Promise<{ success: true, error: null} | {success: false, error: string}> {
+    const user = (await getUser())?.user;
+    const user_id = user?.sub;
+
+    if (!user_id) return { success: false, error: "Unauthenticated user." };
+
+    try {
+        await sql `
+            INSERT INTO user_preferences (user_id, hide_movies)
+            VALUES (${user_id}, ${show})
+            ON CONFLICT (user_id)
+            DO UPDATE SET hide_movies = NOT user_preferences.hide_movies
+        `;
+        return { success: true, error: null }
+    } catch (err) {
+        console.error(err);
+        return { success: false, error: "hideAndShowMovies failed"}
+    }
+}

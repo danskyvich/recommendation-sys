@@ -2,7 +2,9 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog";
 import { ChevronLeft, Loader2, LogOut } from "lucide-react";
 import { ActionResult } from "next/dist/shared/lib/app-router-types";
-import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
+import { useContext, useState, useTransition } from "react";
+import { OverlayTriggerStateContext } from "react-aria-components";
 
 interface DialogProps {
     title: string,
@@ -16,19 +18,22 @@ interface DialogProps {
 export default function DialogComponent({ title, content, onConfirm, yesButtonText, noButtonText, pendingText }: DialogProps) {
     const [isPending, startTransition ] = useTransition();
     const [error, setError] = useState<string | null>(null);
+    const router = useRouter();
+    const triggerState = useContext(OverlayTriggerStateContext);
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         setError(null);
         startTransition( async() => {
-
             try {
                 const result = await onConfirm();
 
                 if (result && result.success === false) {
                     setError(result.error ?? "Something went wrong")
                 }
+                router.refresh();
+                triggerState?.close();
             } catch (err) {
                 throw err;
             }
@@ -66,7 +71,7 @@ export default function DialogComponent({ title, content, onConfirm, yesButtonTe
                         </div> 
                     : 
                     <div className="flex items-center gap-1">
-                      <LogOut size={18} className="min-w-5 h-auto text-red-600"/>
+                      <LogOut size={18} className="min-w-5 h-auto text-red-600 active:text-white"/>
                       <p>{yesButtonText}</p>
                     </div>
                 }

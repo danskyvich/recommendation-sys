@@ -1,5 +1,5 @@
 import { cache } from "react";
-import { auth0 } from "./auth0";
+import { auth0 } from "./actions";
 
 export const getUser = cache(async () => {
     const session = await auth0.getSession();

@@ -3,13 +3,11 @@
 import SettingsPage from "@/app/features/settings/settings-page";
 import { getUser } from "@/app/lib/auth/get-user";
 import { retrieveGenres } from "./actions";
+import SettingsFetch from "@/app/features/settings/settings-fetch";
 
 export default async function Settings() {
 
-    const { user } = await getUser();
-    const genresData = await retrieveGenres();
-
     return(
-        <SettingsPage user={user} genres={genresData}/>
+        <SettingsFetch/>
     )
 }

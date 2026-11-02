@@ -31,7 +31,7 @@ export default function RatingsPage({count, movies}: RatingsPageProps) {
       </header>
       <hr className="border-white/35 mt-1" />
 
-      <section className="relative grid grid-cols-3 lg:grid-cols-4 gap-x-5 gap-y-5 w-full h-full mt-4 justify-evenly">
+      <section className="relative grid grid-cols-3 grid-rows-2 gap-x-5 gap-y-5 w-full h-full mt-4">
         {movies.length === 0 ? (
           <div className="absolute flex flex-col gap-3 inset-0 w-full h-full items-center justify-center">
             <CircleQuestionMark size={30} className="h-auto text-white/50"/>

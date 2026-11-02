@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth0 } from "./app/lib/auth/auth0";
+import { auth0 } from "./app/lib/auth/actions";
 
 export async function proxy(request: Request | NextRequest) {
   if (request.headers.has("next-action")) {
