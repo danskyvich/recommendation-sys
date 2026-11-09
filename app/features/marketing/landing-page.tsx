@@ -56,6 +56,7 @@ export default function LandingPage() {
                 fill
                 sizes="224px"
                 className="object-cover rounded-lg"
+                loading="eager"
               />
             </div>
           ))}

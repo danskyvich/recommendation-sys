@@ -1,10 +1,4 @@
-import AppSidebar from "@/app/components/layout/sidebar/sidebar-main"
-import { SidebarProvider } from "@/components/ui/sidebar"
-import { redirect } from "next/navigation";
 import { Suspense } from "react";
-import Header from "../components/layout/header";
-import { auth0 } from "../lib/auth/actions";
-import { cacheLife, cacheTag } from "next/cache";
 import SessionShell from "./session-shell";
 
 //layout children

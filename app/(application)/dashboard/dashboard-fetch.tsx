@@ -22,13 +22,13 @@ export default async function DashboardFetch() {
       // returns [] if the clear rated or watchlist movies option is off.
       const moviesToBeExcluded = new Set<number>(ratedWatchlistMovieIds);
 
-      // helper function for filtering out
+      // helper function for filtering out rated and watchlist movies
       const filterDashboardHelper = <T extends { id: number }>(
         movies: T[],
       ) => moviesToBeExcluded.size ? movies.filter((movie) => !moviesToBeExcluded.has(movie.id)) : movies;
       
+      // filtered movie functions
       const perGenreVisible = Object.fromEntries(Object.entries(perGenre).map(([k, list]) => [k, filterDashboardHelper(list)]));
-
       filterDashboardHelper(trending);
       filterDashboardHelper(topRated);
     
